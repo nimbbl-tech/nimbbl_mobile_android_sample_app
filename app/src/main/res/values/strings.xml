@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">Nimbbl</string>
+    <!--
+    <string name="access_key">access_key_ZR7ld8EEmrV8b79p</string>
+    <string name="secret_key">access_secret_BmO74nYYnJpnd3qx</string>-->
+
+    <!--       <string name="access_key">access_key_1MwvMkKkweorz0ry</string>
+        <string name="secret_key">access_secret_81x7ByYkRpB4g05N</string>-->
+
+    <string name="access_key">access_key_1MwvMQjywN5zdvry</string>
+    <string name="secret_key">access_secret_qLvaY16KY2ygovQZ</string>
+
+    <string-array name="app_experience_mode">
+        <item>@string/value_native</item>
+        <item>@string/value_webview</item>
+    </string-array>
+
+    <string-array name="app_currency_format">
+        <item>INR</item>
+        <item>USD</item>
+        <item>CAD</item>
+        <item>EUR</item>
+    </string-array>
+
+    <string-array name="option_enabled">
+        <item>your brand name and brand logo</item>
+        <item>your brand logo</item>
+    </string-array>
+
+    <string-array name="option_disabled">
+        <item>your brand name</item>
+    </string-array>
+    <string-array name="payment_type">
+        <item>all payments modes</item>
+        <item>netbanking</item>
+        <item>wallet</item>
+        <item>card</item>
+        <item>upi</item>
+    </string-array>
+
+    <string-array name="payment_type_card">
+        <item>card</item>
+    </string-array>
+
+    <string-array name="sub_payment_type_netbanking">
+        <item>all banks</item>
+        <item>hdfc bank</item>
+        <item>sbi bank</item>
+        <item>kotak bank</item>
+    </string-array>
+
+    <string-array name="sub_payment_type_wallet">
+        <item>all wallets</item>
+        <item>freecharge</item>
+        <item>jio money</item>
+        <item>phonepe</item>
+    </string-array>
+
+    <string-array name="sub_payment_type_upi">
+        <item>collect + intent</item>
+        <item>collect</item>
+        <item>intent</item>
+    </string-array>
+
+
+    <string-array name="app_environments" translatable="false">
+        <item>@string/value_prod</item>
+        <item>@string/value_pp</item>
+        <item>@string/value_uat</item>
+    </string-array>
+
+    <string name="value_dev" translatable="false">Dev</string>
+    <string name="value_uat" translatable="false">Uat</string>
+    <string name="value_pp" translatable="false">Pre-Prod</string>
+    <string name="value_prod" translatable="false">Prod</string>
+
+    <string name="value_native" translatable="false">Native</string>
+    <string name="value_webview" translatable="false">Webview</string>
+
+    <string name="value_native_config" translatable="false">Native Config</string>
+    <string name="value_razorpay_config" translatable="false">RazorPay Config</string>
+    <string name="value_payu_config" translatable="false">PayU Config</string>
+    <string name="value_cash_free_config" translatable="false">CashFree Config</string>
+
+
+    <string-array name="app_test_merchants">
+        <item>@string/value_native_config</item>
+        <item>@string/value_razorpay_config</item>
+        <item>@string/value_payu_config</item>
+        <item>@string/value_cash_free_config</item>
+    </string-array>
+
+    <string name="expandable_card_view_image_content_description">Arrow to expand card</string>
+    <string name="expandable_card_view_icon_content_description">Card icon</string>
+    <string name="tv_resend_otp"><u>Resend OTP</u></string>
+    <string name="lbl_enter_otp">Enter OTP</string>
+    <string name="lbl_enter_mobile_number">Enter Mobile No</string>
+    <string name="lbl_transaction_enquiry">Transaction Enquiry</string>
+    <string name="lbl_done">Done</string>
+    <string name="lbl_retry">Retry</string>
+    <string name="lbl_close">Close</string>
+</resources>
