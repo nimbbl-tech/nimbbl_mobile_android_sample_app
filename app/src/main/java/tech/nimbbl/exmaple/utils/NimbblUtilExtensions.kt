@@ -47,8 +47,8 @@ fun getAccessKey(url: String, header: String): String {
         baseUrlPP -> {
             when (header) {
                 "your brand name and brand logo" -> {
-                   // return "access_key_WKO7dmkKnlwpBvdl"
-                    return "access_key_1MwvMlANM5Lqk7ry"
+                    return "access_key_WKO7dmkKnlwpBvdl"
+                   // return "access_key_1MwvMlANM5Lqk7ry"
                 }
 
                 "your brand logo" -> {
@@ -99,8 +99,8 @@ fun getAccessSecret(url: String, header: String): String {
         baseUrlPP -> {
             when (header) {
                 "your brand name and brand logo" -> {
-                   // return "access_secret_ROG3K9DyyPOPL7kq"
-                    return "access_secret_WKO7dnm5dpeRB3dl"
+                   return "access_secret_ROG3K9DyyPOPL7kq"
+                   // return "access_secret_WKO7dnm5dpeRB3dl"
                 }
 
                 "your brand logo" -> {
