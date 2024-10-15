@@ -288,14 +288,13 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
         token: String,
         invoiceId: String
     ) {
-        val b = NimbblCheckoutOptions.Builder()
+        val builder = NimbblCheckoutOptions.Builder()
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val appMode = preferences.getString(SAMPLE_APP_MODE, "")
         if (appMode.equals(getString(R.string.value_webview))) {
             val options =
-                b.setToken(token)
+                builder.setToken(token)
                     .setOrderToken(orerToken)
-                    .setPackageName(application.packageName)
                     .setOrderId(orderId)
                     .setPaymentModeCode(getPaymentModeCode(binding.spnPaymentMode.selectedItem.toString()))
                     .setBankCode(getBankCode(binding.spnSubPaymentMode.selectedItem.toString()))
