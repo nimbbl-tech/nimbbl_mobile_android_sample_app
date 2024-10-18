@@ -1,9 +1,7 @@
 package tech.nimbbl.exmaple.utils
 
-import org.json.JSONArray
 import org.json.JSONObject
 import tech.nimbbl.coreapisdk.models.Item
-import tech.nimbbl.coreapisdk.utils.PayloadKeys
 import tech.nimbbl.coreapisdk.utils.PayloadKeys.Companion.action_completePayment
 import tech.nimbbl.coreapisdk.utils.PayloadKeys.Companion.action_getBinData
 import tech.nimbbl.coreapisdk.utils.PayloadKeys.Companion.action_initiateOrder
@@ -46,80 +44,31 @@ object AppPayloads {
         totalAmount: Int,
         emailId: String,
         firstname: String,
-        lastname: String,
         mobileNumber: String,
-        addr1: String,
-        street: String,
-        landmark: String,
-        area: String,
-        city: String,
-        state: String,
-        pin: String,
-        skuTitle: String,
-        desc: String,
+        productId: String,
+        paymentMode: String,
+        subPaymentMode: String,
     ): JSONObject {
         val createOrderPayload = JSONObject()
         try {
             createOrderPayload.put("currency", "INR")
-            createOrderPayload.put("total_amount", totalAmount+1)
-            createOrderPayload.put("amount_before_tax", totalAmount)
-            createOrderPayload.put("tax", 1)
-            createOrderPayload.put("invoice_id", "inv_"+getRandomString(10))
-            createOrderPayload.put("referrer_platform", "Android")
-            createOrderPayload.put("referrer_platform_version", "")
-            createOrderPayload.put(PayloadKeys.key_callback_mode, "callback_mobile")
+            createOrderPayload.put("amount", totalAmount.toString())
+            createOrderPayload.put("product_id", productId)
+            createOrderPayload.put("orderLineItems", true)
+            createOrderPayload.put("checkout_experience", "redirect")
+            createOrderPayload.put("payment_mode", paymentMode.ifEmpty { "All" })
+            createOrderPayload.put("subPaymentMode", subPaymentMode)
 
             val userJsonObj = JSONObject()
             userJsonObj.put("email", emailId)
-            userJsonObj.put("first_name", firstname)
-            userJsonObj.put("last_name", lastname)
-            userJsonObj.put("country_code", "+91")
+            userJsonObj.put("name", firstname)
             userJsonObj.put("mobile_number", mobileNumber)
             if(mobileNumber.isNotEmpty()) {
                 createOrderPayload.put("user", userJsonObj)
             }
 
-            val shippingAddrJsonObj = JSONObject()
-            shippingAddrJsonObj.put("address_1", addr1)
-            shippingAddrJsonObj.put("street", street)
-            shippingAddrJsonObj.put("landmark", landmark)
-            shippingAddrJsonObj.put("area", area)
-            shippingAddrJsonObj.put("city", city)
-            shippingAddrJsonObj.put("state", state)
-            shippingAddrJsonObj.put("pincode", pin)
-            shippingAddrJsonObj.put("address_type", "residential")
-           createOrderPayload.put("shipping_address", shippingAddrJsonObj)
-
-            val orderLineItemJsonArray = JSONArray()
-            val orderLineItem = JSONObject()
-            orderLineItem.put("sku_id", "sku1")
-            orderLineItem.put("title", skuTitle)
-            orderLineItem.put("description", desc)
-            orderLineItem.put("quantity", "1")
-            orderLineItem.put("rate", totalAmount)
-            orderLineItem.put("amount_before_tax", totalAmount)
-            orderLineItem.put("tax", 1)
-            orderLineItem.put("total_amount", totalAmount+1)
-            orderLineItem.put(
-                "image_url",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Ay5KWSTviUsTHZ7m_-YJvOlPMwGhZIPuzobqynBqQbQP1_KWCuc8qlwREOiTP38Hs_fLTJYl&usqp=CAc"
-            )
-            orderLineItemJsonArray.put(orderLineItem)
 
 
-            val bankAccountDetails = JSONObject()
-            bankAccountDetails.put("account_number","10038849992883")
-            bankAccountDetails.put("name","Diana Prince")
-            bankAccountDetails.put("ifsc","ICIC0000011")
-           // createOrderPayload.put("bank_account", bankAccountDetails)
-
-
-            val customAttributes = JSONObject()
-            customAttributes.put("name","Diana")
-            customAttributes.put("place","Themyscira")
-            customAttributes.put("animal","Jumpa")
-            customAttributes.put("thing","Tiara")
-            //createOrderPayload.put("custom_attributes", customAttributes)
 
         } catch (e: Exception) {
             e.printStackTrace()

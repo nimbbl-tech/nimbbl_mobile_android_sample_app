@@ -11,28 +11,28 @@ import tech.nimbbl.exmaple.utils.AppPayloads
 class CatalogRepository {
     suspend fun createOrder(
         url: String,
-        token: String,
-        skuTitle: String,
         skuAmount: Int,
-        skuDesc: String,
         userFirstName: String,
-        userLastName: String,
         userEmailId: String,
         userMobileNumber: String,
-        useraddressLine1: String,
-        userAddrStreet: String,
-        userAddrLandmark: String,
-        userAddrArea: String,
-        userAddrCity: String,
-        userAddrState: String,
-        userAddrPin: String
+        productID: String,
+        paymentMode: String,
+        subPaymentMode: String
     ): Response<CreateOrderResponse> {
-        val createOrderObj = AppPayloads.createOrderPayload(skuAmount,userEmailId,userFirstName,userLastName,userMobileNumber,useraddressLine1,userAddrStreet,userAddrLandmark,userAddrArea,userAddrCity,userAddrState,userAddrPin, skuTitle,skuDesc)
+        val createOrderObj = AppPayloads.createOrderPayload(
+            skuAmount,
+            userEmailId,
+            userFirstName,
+            userMobileNumber,
+            productID,
+            paymentMode,
+            subPaymentMode
+        )
         val body: RequestBody = RequestBody.create(
             "application/json; charset=utf-8".toMediaTypeOrNull(),
             createOrderObj.toString()
         )
-        return ApiCall()!!.creatOrder(url,"Bearer $token", body)
+        return ApiCall()!!.createOrder(url, body)
     }
 
     suspend fun generateToken(

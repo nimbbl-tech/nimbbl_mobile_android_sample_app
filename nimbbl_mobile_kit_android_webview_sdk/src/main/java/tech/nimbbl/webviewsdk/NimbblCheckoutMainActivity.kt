@@ -51,6 +51,7 @@ import tech.nimbbl.webviewsdk.util.LogUtil.Companion.debugLog
 import tech.nimbbl.webviewsdk.util.RestApiUtils
 import tech.nimbbl.webviewsdk.util.encodeToBase64
 import tech.nimbbl.webviewsdk.util.isNetConnected
+import tech.nimbbl.webviewsdk.util.parseJwtToken
 import java.net.URLDecoder
 
 
@@ -76,6 +77,7 @@ class NimbblCheckoutMainActivity : AppCompatActivity() {
     private lateinit var transactionID: String
     private var btnBackGroundColor = "#000000"
     private var btnTextColor = "#ffffff"
+    private var orderID = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +88,9 @@ class NimbblCheckoutMainActivity : AppCompatActivity() {
             if (!isNetConnected(this)) {
                 onFailedPayment(getString(R.string.no_internet))
             } else {
-                updateOrder(options.token!!, options.orderId!!)
+                orderID = parseJwtToken(options.orderToken!!)
+                Log.d("orderID-->",orderID)
+                updateOrder(options.orderToken!!, orderID)
             }
         } else {
             onFailedPayment(getString(R.string.input_sent_invalid))
@@ -163,7 +167,7 @@ class NimbblCheckoutMainActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         //val url = RestApiUtils.WEB_VIEW_VIEW_URL
-        var url = String.format(RestApiUtils.WEB_VIEW_VIEW_URL, options.orderId, options.orderToken)
+        var url = String.format(RestApiUtils.WEB_VIEW_VIEW_URL, orderID, options.orderToken)
         if (options.paymentModeCode?.isNotEmpty() == true) {
             url = if (url.indexOf("?") > 0) {
                 "$url&payment_mode=${options.paymentModeCode}"
@@ -306,9 +310,9 @@ class NimbblCheckoutMainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val paymentEnquiryResponse = NimbblCoreApiSDK.getInstance()
                 ?.getTransactionEnquiry(
-                    options.token!!,
-                    options.orderId!!,
-                    options.invoiceId!!,
+                    options.orderToken!!,
+                    orderID,
+                    orderID,
                     transactionID
                 )
             /*  val paymentEnquiryResponse = NimbblCoreApiSDK.getInstance()
@@ -610,7 +614,7 @@ class NimbblCheckoutMainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             NimbblCoreApiSDK.getInstance()
-                ?.updateCheckOutCancelReason(options.token!!, options.orderId!!, cancelReason!!)
+                ?.updateCheckOutCancelReason(options.orderToken!!, orderID, cancelReason!!)
         }
 
 

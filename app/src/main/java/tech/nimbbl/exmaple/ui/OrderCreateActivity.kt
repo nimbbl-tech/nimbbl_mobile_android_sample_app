@@ -12,10 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.RequestBody
 import org.json.JSONObject
 import tech.nimbbl.coreapisdk.interfaces.NimbblCheckoutPaymentListener
-import tech.nimbbl.coreapisdk.utils.getAPIRequestBody
 import tech.nimbbl.exmaple.R
 import tech.nimbbl.exmaple.databinding.ActivityOrderCreateBinding
 import tech.nimbbl.exmaple.network.ApiCall.Companion.BASE_URL
@@ -26,11 +24,11 @@ import tech.nimbbl.exmaple.ui.adapter.headerCustomisationSpinAdapter
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.APP_PREFERENCE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
-import tech.nimbbl.exmaple.utils.getAccessKey
-import tech.nimbbl.exmaple.utils.getAccessSecret
 import tech.nimbbl.exmaple.utils.getBankCode
 import tech.nimbbl.exmaple.utils.getPaymentFlow
 import tech.nimbbl.exmaple.utils.getPaymentModeCode
+import tech.nimbbl.exmaple.utils.getProductID
+import tech.nimbbl.exmaple.utils.getShopUrl
 import tech.nimbbl.exmaple.utils.getWalletCode
 import tech.nimbbl.webviewsdk.NimbblCheckoutOptions
 import tech.nimbbl.webviewsdk.NimbblCheckoutSDK
@@ -201,56 +199,38 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                     val shopBaseUrl = preferences.getString(SHOP_BASE_URL, BASE_URL).toString()
                     val testMerchant = binding.spnTestMerchant.selectedItem.toString()
 
+
                     NimbblCheckoutSDK.instance?.setEnvironmentUrl(shopBaseUrl)
-                    val jsonObject = JSONObject()
-                    jsonObject.put("access_key", getAccessKey(shopBaseUrl, testMerchant))
-                    jsonObject.put("access_secret", getAccessSecret(shopBaseUrl, testMerchant))
-                    val body: RequestBody = getAPIRequestBody(jsonObject)
-                    val tokenResponse = CatalogRepository().generateToken(
-                        shopBaseUrl + "api/v3/generate-token", body
-                    )
-                    if (tokenResponse.isSuccessful) {
-                        val token = tokenResponse.body()?.token.toString()
+
                         val response = CatalogRepository().createOrder(
-                            shopBaseUrl + "api/v3/create-order",
-                            token,
-                            skuTitle,
+                            getShopUrl(shopBaseUrl)+"create-shop",
                             skuAmount,
-                            skuDesc,
                             userFirstName,
-                            userLastName,
                             userEmailId,
                             userMobileNumber,
-                            useraddressLine1,
-                            userAddrStreet,
-                            userAddrLandmark,
-                            userAddrArea,
-                            userAddrCity,
-                            userAddrState,
-                            userAddrPin
+                            getProductID(testMerchant),
+                            getPaymentModeCode(binding.spnPaymentMode.selectedItem.toString()),
+                                    getBankCode(binding.spnPaymentMode.selectedItem.toString())
                         )
                         if (response.isSuccessful) {
                             Log.i("response", response.body()!!.order_id)
                             makePayment(
-                                response.body()!!.order_id,
-                                "",
-                                skuAmount,
                                 response.body()!!.token,
-                                token,
-                                response.body()!!.invoice_id
 
                             )
                         } else {
                             try {
                                 val errorMessage = response.errorBody()?.string()
-                                val jsonObj = JSONObject(errorMessage)
+                                val jsonObj = errorMessage?.let { it1 -> JSONObject(it1) }
 
-                                Toast.makeText(
-                                    this@OrderCreateActivity,
-                                    jsonObj.getJSONObject("error")
-                                        .getString("nimbbl_consumer_message"),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                if (jsonObj != null) {
+                                    Toast.makeText(
+                                        this@OrderCreateActivity,
+                                        jsonObj.getJSONObject("error")
+                                            .getString("nimbbl_consumer_message"),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             } catch (e: Exception) {
                                 Toast.makeText(
                                     this@OrderCreateActivity,
@@ -259,7 +239,6 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                                 ).show()
                             }
                         }
-                    }
 
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -281,26 +260,18 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
 
 
     private fun makePayment(
-        orderId: String,
-        subMerchantId: String,
-        skuAmount: Int,
-        orerToken: String,
-        token: String,
-        invoiceId: String
+        orderToken: String,
     ) {
         val builder = NimbblCheckoutOptions.Builder()
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val appMode = preferences.getString(SAMPLE_APP_MODE, "")
         if (appMode.equals(getString(R.string.value_webview))) {
             val options =
-                builder.setToken(token)
-                    .setOrderToken(orerToken)
-                    .setOrderId(orderId)
+                builder.setOrderToken(orderToken)
                     .setPaymentModeCode(getPaymentModeCode(binding.spnPaymentMode.selectedItem.toString()))
                     .setBankCode(getBankCode(binding.spnSubPaymentMode.selectedItem.toString()))
                     .setPaymentFlow(getPaymentFlow(binding.spnSubPaymentMode.selectedItem.toString()))
                     .setWalletCode(getWalletCode(binding.spnSubPaymentMode.selectedItem.toString()))
-                    .setInvoiceId(invoiceId)
                     .build()
             NimbblCheckoutSDK.instance?.init(this)
             NimbblCheckoutSDK.instance?.checkout(options)

@@ -10,11 +10,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Url
 import tech.nimbbl.exmaple.model.GenerateTokenResponse
 import tech.nimbbl.exmaple.model.createorder.CreateOrderResponse
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPROD
+import tech.nimbbl.exmaple.utils.getShopUrl
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -22,14 +23,14 @@ interface ApiCall {
 
 
     @POST
-    suspend fun creatOrder(@Url url :String,@Header("Authorization") auth: String, @Body body: RequestBody):retrofit2.Response<CreateOrderResponse>
+    suspend fun createOrder(@Url url :String, @Body body: RequestBody):retrofit2.Response<CreateOrderResponse>
 
     @POST
     suspend fun generateToken(@Url url: String,@Body body: RequestBody): retrofit2.Response<GenerateTokenResponse>
 
     companion object{
         //    private const val BASE_URL = "http://8914a19e267b.ngrok.io/api/"
-          var BASE_URL = "https://api.nimbbl.tech/"
+          var BASE_URL = baseUrlPROD
        // private const val BASE_URL = "https://uatshop.nimbbl.tech/api/"
         private var retrofit: Retrofit? = null
 
@@ -57,7 +58,7 @@ interface ApiCall {
                 .create()
 
             retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(getShopUrl(BASE_URL))
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()

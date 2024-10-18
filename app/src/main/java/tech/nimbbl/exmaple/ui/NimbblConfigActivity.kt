@@ -13,6 +13,9 @@ import tech.nimbbl.exmaple.network.ApiCall.Companion.BASE_URL
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.APP_PREFERENCE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPP
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPROD
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlUAT
 import tech.nimbbl.webviewsdk.NimbblCheckoutSDK
 
 
@@ -34,13 +37,13 @@ class NimbblConfigActivity : AppCompatActivity() {
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val baseUrl = preferences.getString(SHOP_BASE_URL, BASE_URL)
         when {
-            baseUrl.equals("https://qa4api.nimbbl.tech/") -> {
+            baseUrl.equals(baseUrlUAT) -> {
                 binding.spnEnvironments.setSelection(2)
             }
-            baseUrl.equals("https://apipp.nimbbl.tech/") -> {
+            baseUrl.equals(baseUrlPP) -> {
                 binding.spnEnvironments.setSelection(1)
             }
-            baseUrl.equals("https://api.nimbbl.tech/") -> {
+            baseUrl.equals(baseUrlPROD) -> {
                 binding.spnEnvironments.setSelection(0)
             }
         }
@@ -58,13 +61,13 @@ class NimbblConfigActivity : AppCompatActivity() {
             val editor: SharedPreferences.Editor = preferences.edit()
             when (binding.spnEnvironments.selectedItem.toString()) {
                 getString(R.string.value_uat) -> {
-                    BASE_URL = "https://uatapi.nimbbl.tech/"
+                    BASE_URL = baseUrlUAT
                 }
                 getString(R.string.value_pp)-> {
-                    BASE_URL = "https://apipp.nimbbl.tech/"
+                    BASE_URL = baseUrlPP
                 }
                 getString(R.string.value_prod) -> {
-                    BASE_URL = "https://api.nimbbl.tech/"
+                    BASE_URL = baseUrlPROD
                 }
             }
 
