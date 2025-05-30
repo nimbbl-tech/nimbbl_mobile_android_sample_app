@@ -49,9 +49,9 @@ dependencies {
     api(platform("com.squareup.okhttp3:okhttp-bom:4.8.1"))
     api("com.squareup.okhttp3:okhttp")
     api("com.squareup.okhttp3:logging-interceptor")
-    implementation(libs.nimbbl.checkout.sdk)
-    //implementation (project(":nimbbl_mobile_kit_android_webview_sdk"))
-    //implementation (project(":nimbbl_mobile_kit_core_api_sdk"))
+    //implementation(libs.nimbbl.checkout.sdk)
+    implementation (project(":nimbbl_mobile_kit_android_webview_sdk"))
+    implementation (project(":nimbbl_mobile_kit_core_api_sdk"))
     implementation ("com.airbnb.android:lottie:3.4.1")
     implementation ("com.github.bumptech.glide:glide:4.13.2")
 }

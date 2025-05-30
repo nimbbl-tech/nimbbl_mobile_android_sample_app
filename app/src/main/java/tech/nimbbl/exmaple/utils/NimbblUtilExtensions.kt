@@ -5,7 +5,8 @@ import android.graphics.drawable.GradientDrawable
 import android.widget.Toast
 import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPP
 import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPROD
-import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlUAT
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlQA1
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlQA2
 
 
 /*
@@ -68,7 +69,10 @@ fun getShopUrl(url: String): String {
             return "https://sonicshopapi.nimbbl.tech/"
         }
 
-        baseUrlUAT -> {
+        baseUrlQA1 -> {
+            return "https://qa1sonicshopapi.nimbbl.tech/"
+        }
+        baseUrlQA2 -> {
             return "https://qa2sonicshopapi.nimbbl.tech/"
         }
     }

@@ -15,7 +15,8 @@ import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
 import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPP
 import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPROD
-import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlUAT
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlQA1
+import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlQA2
 import tech.nimbbl.webviewsdk.NimbblCheckoutSDK
 
 
@@ -37,8 +38,11 @@ class NimbblConfigActivity : AppCompatActivity() {
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val baseUrl = preferences.getString(SHOP_BASE_URL, BASE_URL)
         when {
-            baseUrl.equals(baseUrlUAT) -> {
+            baseUrl.equals(baseUrlQA1) -> {
                 binding.spnEnvironments.setSelection(2)
+            }
+            baseUrl.equals(baseUrlQA2) -> {
+                binding.spnEnvironments.setSelection(3)
             }
             baseUrl.equals(baseUrlPP) -> {
                 binding.spnEnvironments.setSelection(1)
@@ -60,8 +64,11 @@ class NimbblConfigActivity : AppCompatActivity() {
         binding.btnDone.setOnClickListener {
             val editor: SharedPreferences.Editor = preferences.edit()
             when (binding.spnEnvironments.selectedItem.toString()) {
-                getString(R.string.value_uat) -> {
-                    BASE_URL = baseUrlUAT
+                getString(R.string.value_qa1) -> {
+                    BASE_URL = baseUrlQA1
+                }
+                getString(R.string.value_qa2) -> {
+                    BASE_URL = baseUrlQA2
                 }
                 getString(R.string.value_pp)-> {
                     BASE_URL = baseUrlPP

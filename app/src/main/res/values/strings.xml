@@ -66,11 +66,12 @@
     <string-array name="app_environments" translatable="false">
         <item>@string/value_prod</item>
         <item>@string/value_pp</item>
-        <item>@string/value_uat</item>
+        <item>@string/value_qa1</item>
+        <item>@string/value_qa2</item>
     </string-array>
 
-    <string name="value_dev" translatable="false">Dev</string>
-    <string name="value_uat" translatable="false">Uat</string>
+    <string name="value_qa1" translatable="false">QA 1</string>
+    <string name="value_qa2" translatable="false">QA 2</string>
     <string name="value_pp" translatable="false">Pre-Prod</string>
     <string name="value_prod" translatable="false">Prod</string>
 
