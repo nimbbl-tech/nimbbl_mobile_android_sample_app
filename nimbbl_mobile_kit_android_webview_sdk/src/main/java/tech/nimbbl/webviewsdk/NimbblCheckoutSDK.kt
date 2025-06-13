@@ -31,22 +31,27 @@ class NimbblCheckoutSDK private constructor() {
     fun checkout(options: NimbblCheckoutOptions?) {
 
         //this.options = options;
-        val intent = Intent(mContext, NimbblCheckoutMainActivity::class.java)
-        intent.putExtra("options", options)
-        mContext!!.startActivity(intent)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mContext!!.registerReceiver(
-                receiver, IntentFilter("PaymentSuccess"),
-                Context.RECEIVER_EXPORTED
-            )
-            mContext!!.registerReceiver(
-                receiver, IntentFilter("PaymentFailure"),
-                Context.RECEIVER_EXPORTED
-            )
-        } else {
-            mContext!!.registerReceiver(receiver, IntentFilter("PaymentSuccess"))
-            mContext!!.registerReceiver(receiver, IntentFilter("PaymentFailure"))
+        try {
+            val intent = Intent(mContext, NimbblCheckoutMainActivity::class.java)
+            intent.putExtra("options", options)
+            mContext!!.startActivity(intent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mContext!!.registerReceiver(
+                    receiver, IntentFilter("PaymentSuccess"),
+                    Context.RECEIVER_EXPORTED
+                )
+                mContext!!.registerReceiver(
+                    receiver, IntentFilter("PaymentFailure"),
+                    Context.RECEIVER_EXPORTED
+                )
+            } else {
+                mContext!!.registerReceiver(receiver, IntentFilter("PaymentSuccess"))
+                mContext!!.registerReceiver(receiver, IntentFilter("PaymentFailure"))
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
         }
+
 
     }
 
@@ -66,6 +71,10 @@ class NimbblCheckoutSDK private constructor() {
         var webViewUrl = ""
         var webViewRespUrl = ""
         when (NIMBBL_TECH_URL) {
+            "https://qa1api.nimbbl.tech/" -> {
+                webViewUrl = "https://qa1sonic.nimbbl.tech/?order_id=%1\$s&token=%2\$s"
+                webViewRespUrl = "https://qa1sonic.nimbbl.tech/mobile/redirect"
+            }
             "https://qa2api.nimbbl.tech/" -> {
                 webViewUrl = "https://qa2sonic.nimbbl.tech/?order_id=%1\$s&token=%2\$s"
                 webViewRespUrl = "https://qa2sonic.nimbbl.tech/mobile/redirect"
@@ -73,9 +82,9 @@ class NimbblCheckoutSDK private constructor() {
 
             "https://apipp.nimbbl.tech/" -> {
               //  webViewUrl = "https://sonicpp.nimbbl.tech/?order_id=%1\$s&token=%2\$s"
-                webViewUrl = "https://sonicpp2.nimbbl.tech/?order_id=%1\$s&token=%2\$s"
+                webViewUrl = "https://sonicpp.nimbbl.tech/?order_id=%1\$s&token=%2\$s"
                 //webViewRespUrl = "https://sonicpp.nimbbl.tech/mobile/redirect"
-                webViewRespUrl = "https://sonicpp2.nimbbl.tech/mobile/redirect"
+                webViewRespUrl = "https://sonicpp.nimbbl.tech/mobile/redirect"
             }
 
             "https://api.nimbbl.tech/" -> {
