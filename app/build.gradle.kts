@@ -54,8 +54,8 @@ dependencies {
     api("com.squareup.okhttp3:logging-interceptor")
 
     // Uncomment below lines if using local projects
-     implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
-     implementation(project(":nimbbl_mobile_kit_core_api_sdk"))
+     //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
+     //implementation(project(":nimbbl_mobile_kit_core_api_sdk"))
 
 
     // Optional SDK integrations
@@ -63,7 +63,7 @@ dependencies {
     // implementation("tech.nimbbl.sdk:nimbbl-checkout-core-sdk-java:3.0.5")
     implementation("com.airbnb.android:lottie:3.4.1")
     implementation("com.github.bumptech.glide:glide:4.13.2")
-    //implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_core_api_sdk:3.0.7")
-    //implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.7")
+    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_core_api_sdk:3.0.7")
+    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.7")
 }
 
