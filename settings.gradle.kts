@@ -13,7 +13,9 @@ pluginManagement {
         maven {
             url = uri("https://gitlab.com/api/v4/projects/25847308/packages/maven")
         }
-        maven { url = uri("https://jitpack.io") }
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 
 }
@@ -25,12 +27,15 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://gitlab.com/api/v4/projects/25847308/packages/maven")
         }
-        maven { url = uri("https://jitpack.io") }
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 }
 
 rootProject.name = "Nimbbl-Android-Sample-App"
 include(":app")
 
-/*include(":nimbbl_mobile_kit_android_webview_sdk")
-include(":nimbbl_mobile_kit_core_api_sdk")*/
+include(":nimbbl_mobile_kit_android_webview_sdk", ":nimbbl_mobile_kit_core_api_sdk")
+project(":nimbbl_mobile_kit_android_webview_sdk").projectDir = file("/Users/zeptodigital/StudioProjects/Nimbbl30042024/nimbbl_mobile_kit_android_webview_sdk")
+project(":nimbbl_mobile_kit_core_api_sdk").projectDir = file("/Users/zeptodigital/StudioProjects/Nimbbl30042024/nimbbl_mobile_kit_core_api_sdk")
