@@ -37,7 +37,12 @@ rootProject.name = "Nimbbl-Android-Sample-App"
 include(":app")
 
 /*
-include(":nimbbl_mobile_kit_android_webview_sdk", ":nimbbl_mobile_kit_core_api_sdk")
-project(":nimbbl_mobile_kit_android_webview_sdk").projectDir = file("/Users/zeptodigital/StudioProjects/Nimbbl30042024/nimbbl_mobile_kit_android_webview_sdk")
-project(":nimbbl_mobile_kit_core_api_sdk").projectDir = file("/Users/zeptodigital/StudioProjects/Nimbbl30042024/nimbbl_mobile_kit_core_api_sdk")
+// Include Core API SDK
+include(":nimbbl_mobile_kit_core_api_sdk")
+project(":nimbbl_mobile_kit_core_api_sdk").projectDir = file("/Users/sandeepyadav/StudioProjects/nimbbl_mobile_kit_core_api_sdk")
+
+// Include WebView SDK (Core API SDK will be included transitively)
+include(":nimbbl_mobile_kit_android_webview_sdk")
+project(":nimbbl_mobile_kit_android_webview_sdk").projectDir = file("/Users/sandeepyadav/StudioProjects/nimbbl_mobile_kit_android_webview_sdk")
 */
+

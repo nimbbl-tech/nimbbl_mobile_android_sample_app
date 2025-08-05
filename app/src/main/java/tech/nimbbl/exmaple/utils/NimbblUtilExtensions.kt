@@ -1,37 +1,7 @@
 package tech.nimbbl.exmaple.utils
 
-import android.app.Activity
+import android.content.Context
 import android.graphics.drawable.GradientDrawable
-import android.widget.Toast
-import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPP
-import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlPROD
-import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlQA1
-import tech.nimbbl.exmaple.utils.Constants.Companion.baseUrlQA2
-
-
-/*
-Created by Sandeep Yadav on 10/05/24.
-Copyright (c) 2024 Bigital Technologies Pvt. Ltd. All rights reserved.
-*/
-
-
-fun Activity.displayToast(message: String) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-}
-
-
-/**
- * Hide some cell phone numbers
- * @param phone
- * @return
- */
-fun hidePhoneNum(phone: String): String {
-    return if (phone.length > 9) {
-        phone.substring(0, 3) + "XXXX" + phone.substring(7)
-    } else {
-        phone
-    }
-}
 
 fun drawCircle(backgroundColor: Int, borderColor: Int): GradientDrawable {
     val shape = GradientDrawable()
@@ -42,141 +12,91 @@ fun drawCircle(backgroundColor: Int, borderColor: Int): GradientDrawable {
     return shape
 }
 
-fun getProductID(header: String): String {
+fun getProductID(header: String, context: Context): String {
     when (header) {
-        "your brand name and brand logo" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.brand_name_and_logo) -> {
             return "11"
         }
-
-        "your brand logo" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.brand_logo) -> {
             return "12"
         }
-
-        "your brand name" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.brand_name) -> {
             return "13"
         }
     }
     return ""
 }
 
-fun getShopUrl(url: String): String {
-    when (url) {
-        baseUrlPP -> {
-            return "https://sonicshopapipp.nimbbl.tech/"
-        }
-
-        baseUrlPROD -> {
-            return "https://sonicshopapi.nimbbl.tech/"
-        }
-
-        baseUrlQA1 -> {
-            return "https://qa1sonicshopapi.nimbbl.tech/"
-        }
-        baseUrlQA2 -> {
-            return "https://qa2sonicshopapi.nimbbl.tech/"
-        }
-    }
-    return ""
-}
-
-fun getRandomString(length: Int): String {
-    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-    return (1..length)
-        .map { allowedChars.random() }
-        .joinToString("")
-}
-
-fun getPaymentModeCode(paymentMode: String): String {
+fun getPaymentModeCode(paymentMode: String, context: Context): String {
     when (paymentMode) {
-        "all payments modes" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.all_payment_modes) -> {
             return ""
         }
-
-        "netbanking" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.netbanking) -> {
             return "Netbanking"
         }
-
-        "wallet" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.wallet) -> {
             return "Wallet"
         }
-
-        "card" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.card) -> {
             return "card"
         }
-
-        "upi" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.upi) -> {
             return "UPI"
         }
-
         else -> return ""
     }
-
 }
 
-fun getBankCode(bankName: String): String {
+fun getBankCode(bankName: String, context: Context): String {
     return when (bankName) {
-        "all banks" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.all_banks) -> {
             ""
         }
-
-        "hdfc bank" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.hdfc_bank) -> {
             "hdfc"
         }
-
-        "sbi bank" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.sbi_bank) -> {
             "sbi"
         }
-
-        "kotak bank" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.kotak_bank) -> {
             "kotak"
         }
-
         else -> ""
     }
-
 }
 
-fun getWalletCode(walletName: String): String {
+fun getWalletCode(walletName: String, context: Context): String {
     return when (walletName) {
-        "all wallets" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.all_wallets) -> {
             ""
         }
-
-        "freecharge" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.freecharge) -> {
             "freecharge"
         }
-
-        "jio money" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.jio_money) -> {
             "jio_money"
         }
-
-        "phonepe" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.phonepe) -> {
             "phonepe"
         }
-
         else -> ""
     }
-
 }
 
-
-fun getPaymentFlow(upiModeName: String): String {
+fun getPaymentFlow(upiModeName: String, context: Context): String {
     return when (upiModeName) {
-        "collect + intent" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.collect_intent) -> {
             "phonepe"
         }
-
-        "collect" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.collect) -> {
             "collect"
         }
-
-        "intent" -> {
+        context.getString(tech.nimbbl.exmaple.R.string.intent) -> {
             "intent"
         }
-
         else -> ""
     }
-
 }
 
 

@@ -10,6 +10,93 @@
     <string name="access_key">access_key_1MwvMQjywN5zdvry</string>
     <string name="secret_key">access_secret_qLvaY16KY2ygovQZ</string>
 
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="select_environment">Select Environment</string>
+    <string name="select_experience">Select Experience</string>
+    <string name="qa_url_hint">Enter QA environment URL</string>
+    <string name="settings_saved_success">Settings saved successfully!</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Order Success Page -->
+    <string name="order_success_title">Order Success</string>
+    <string name="order_id_label">Order id:- %s</string>
+    <string name="status_label">Status:- %s</string>
+
+    <!-- Order Creation -->
+    <string name="order_creation_failed">Failed: %s</string>
+    <string name="order_created_null_response">Order created but response body is null</string>
+    <string name="unable_to_create_order">Unable to create order</string>
+    <string name="unable_to_create_order_error">Unable to create order,\n%s</string>
+    <string name="payment_success_message" formatted="false">OrderId=%s, Status=%s</string>
+
+    <!-- Payment Flow -->
+    <string name="no_internet">No internet connection</string>
+    <string name="input_sent_invalid">Invalid input sent</string>
+    <string name="error_in_update_order">Error updating order</string>
+
+    <!-- Order Create Activity Layout -->
+    <string name="by_nimbbl">by nimbbl.</string>
+    <string name="paper_plane">paper plane.</string>
+    <string name="transaction_info">this is a real transaction, any amount deducted will refunded within 7 working days</string>
+    <string name="order_line_items">order line items and personalised payment options</string>
+    <string name="header_customisation">header customisation</string>
+    <string name="payment_customisation">payment customisation</string>
+    <string name="subpayment_mode">subpayment mode</string>
+    <string name="user_details">user details?</string>
+    <string name="pay_now">pay now</string>
+    <string name="creating_order">creating order...</string>
+    <string name="name_hint">name</string>
+    <string name="number_hint">number</string>
+    <string name="email_hint">email id</string>
+    <string name="copyright_text">© 2025 nimbbl by bigital technologies pvt ltd</string>
+
+    <!-- Main Activity -->
+    <string name="hello_world">Hello World!</string>
+
+    <!-- Default Values -->
+    <string name="default_prod">Prod</string>
+    <string name="default_native">Native</string>
+
+    <!-- Spinner Adapter Placeholders -->
+    <string name="card_placeholder">card</string>
+    <string name="quick_sort_placeholder">Quick Sort</string>
+
+    <!-- Settings Dialog -->
+    <string name="lbl_done">Done</string>
+
+    <!-- Utility Functions -->
+    <string name="phone_mask">XXXX</string>
+    
+    <!-- Product Headers -->
+    <string name="brand_name_and_logo">your brand name and brand logo</string>
+    <string name="brand_logo">your brand logo</string>
+    <string name="brand_name">your brand name</string>
+    
+    <!-- Payment Modes -->
+    <string name="all_payment_modes">all payments modes</string>
+    <string name="netbanking">netbanking</string>
+    <string name="wallet">wallet</string>
+    <string name="card">card</string>
+    <string name="upi">upi</string>
+    
+    <!-- Bank Names -->
+    <string name="all_banks">all banks</string>
+    <string name="hdfc_bank">hdfc bank</string>
+    <string name="sbi_bank">sbi bank</string>
+    <string name="kotak_bank">kotak bank</string>
+    
+    <!-- Wallet Names -->
+    <string name="all_wallets">all wallets</string>
+    <string name="freecharge">freecharge</string>
+    <string name="jio_money">jio money</string>
+    <string name="phonepe">phonepe</string>
+    
+    <!-- UPI Modes -->
+    <string name="collect_intent">collect + intent</string>
+    <string name="collect">collect</string>
+    <string name="intent">intent</string>
+
     <string-array name="app_experience_mode">
         <item>@string/value_native</item>
         <item>@string/value_webview</item>
@@ -66,12 +153,10 @@
     <string-array name="app_environments" translatable="false">
         <item>@string/value_prod</item>
         <item>@string/value_pp</item>
-        <item>@string/value_qa1</item>
-        <item>@string/value_qa2</item>
+        <item>@string/value_qa</item>
     </string-array>
 
-    <string name="value_qa1" translatable="false">QA 1</string>
-    <string name="value_qa2" translatable="false">QA 2</string>
+    <string name="value_qa" translatable="false">QA</string>
     <string name="value_pp" translatable="false">Pre-Prod</string>
     <string name="value_prod" translatable="false">Prod</string>
 
@@ -82,6 +167,20 @@
     <string name="value_razorpay_config" translatable="false">RazorPay Config</string>
     <string name="value_payu_config" translatable="false">PayU Config</string>
     <string name="value_cash_free_config" translatable="false">CashFree Config</string>
+    <string name="value_paytm_config" translatable="false">Paytm Config</string>
+    <string name="value_phonepe_config" translatable="false">PhonePe Config</string>
+    <string name="value_amazonpay_config" translatable="false">Amazon Pay Config</string>
+    <string name="value_mobikwik_config" translatable="false">Mobikwik Config</string>
+    <string name="value_freecharge_config" translatable="false">FreeCharge Config</string>
+    <string name="value_olamoney_config" translatable="false">Ola Money Config</string>
+    <string name="value_airtelmoney_config" translatable="false">Airtel Money Config</string>
+    <string name="value_jiomoney_config" translatable="false">Jio Money Config</string>
+    <string name="value_icicimobile_config" translatable="false">ICICI Mobile Config</string>
+    <string name="value_hdfcpay_config" translatable="false">HDFC Pay Config</string>
+    <string name="value_sbiyono_config" translatable="false">SBI Yono Config</string>
+    <string name="value_axismobile_config" translatable="false">Axis Mobile Config</string>
+    <string name="value_kotakmobile_config" translatable="false">Kotak Mobile Config</string>
+    <string name="value_unionbankmobile_config" translatable="false">Union Bank Mobile Config</string>
 
 
     <string-array name="app_test_merchants">
@@ -91,13 +190,8 @@
         <item>@string/value_cash_free_config</item>
     </string-array>
 
-    <string name="expandable_card_view_image_content_description">Arrow to expand card</string>
-    <string name="expandable_card_view_icon_content_description">Card icon</string>
-    <string name="tv_resend_otp"><u>Resend OTP</u></string>
-    <string name="lbl_enter_otp">Enter OTP</string>
-    <string name="lbl_enter_mobile_number">Enter Mobile No</string>
-    <string name="lbl_transaction_enquiry">Transaction Enquiry</string>
-    <string name="lbl_done">Done</string>
-    <string name="lbl_retry">Retry</string>
-    <string name="lbl_close">Close</string>
+    <!-- Error Messages -->
+    <string name="network_error">Network error occurred. Please check your connection and try again.</string>
+    <string name="invalid_response_format">Invalid response format received from server.</string>
+    <string name="unsupported_payment_mode">Unsupported payment mode selected.</string>
 </resources>

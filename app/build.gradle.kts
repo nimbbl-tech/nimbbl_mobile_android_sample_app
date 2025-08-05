@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.application") version "8.10.1"
+    id("com.android.application")
     id("org.jetbrains.kotlin.android") version "1.9.0"
 }
 
 android {
     namespace = "tech.nimbbl.exmaple"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "tech.nimbbl.exmaple"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -33,6 +33,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    
+    lint {
+        disable += "NotificationPermission"
+    }
 }
 
 dependencies {
@@ -53,17 +57,10 @@ dependencies {
     api("com.squareup.okhttp3:okhttp")
     api("com.squareup.okhttp3:logging-interceptor")
 
-    // Uncomment below lines if using local projects
-     //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
-     //implementation(project(":nimbbl_mobile_kit_core_api_sdk"))
-
-
-    // Optional SDK integrations
-    // implementation("tech.nimbbl.sdk:nimbbl-checkout-sdk:3.0.5")
-    // implementation("tech.nimbbl.sdk:nimbbl-checkout-core-sdk-java:3.0.5")
-    implementation("com.airbnb.android:lottie:3.4.1")
-    implementation("com.github.bumptech.glide:glide:4.13.2")
-    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_core_api_sdk:3.0.7")
-    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.7")
+    // WebView SDK dependency (includes Core API SDK transitively)
+    //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
+    
+    // SDK integrations
+    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.12")
 }
 

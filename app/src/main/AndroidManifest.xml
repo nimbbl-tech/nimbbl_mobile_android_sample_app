@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NimbblAndroidSampleApp"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:ignore="NotificationPermission">
         <activity
             android:name=".ui.OrderCreateActivity"
             android:exported="true" >
@@ -30,7 +31,8 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.OrderSucessPageAcitivty"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

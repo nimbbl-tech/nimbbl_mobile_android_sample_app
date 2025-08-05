@@ -21,9 +21,9 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/image_view"
-        android:text="card"
+        android:text="@string/card_placeholder"
         android:fontFamily="@font/gorditamedium"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         android:textSize="12sp" />
 
 </RelativeLayout>
