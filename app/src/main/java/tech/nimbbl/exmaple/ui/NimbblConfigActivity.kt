@@ -41,7 +41,7 @@ class NimbblConfigActivity : AppCompatActivity() {
     private val environments = arrayOf(ENVIRONMENT_PROD, ENVIRONMENT_PRE_PROD, ENVIRONMENT_QA)
     private val experiences = arrayOf(EXPERIENCE_NATIVE, EXPERIENCE_WEBVIEW)
     private var selectedEnvironment: String = ENVIRONMENT_PROD
-    private var selectedExperience: String = EXPERIENCE_NATIVE
+    private var selectedExperience: String = EXPERIENCE_WEBVIEW
     private var qaUrl: String = DEFAULT_QA_URL
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,7 +103,7 @@ class NimbblConfigActivity : AppCompatActivity() {
         }
         
         // Load experience
-        val savedExperience = preferences.getString(SAMPLE_APP_MODE, EXPERIENCE_NATIVE)
+        val savedExperience = preferences.getString(SAMPLE_APP_MODE, EXPERIENCE_WEBVIEW)
         selectedExperience = if (savedExperience == EXPERIENCE_NATIVE) EXPERIENCE_NATIVE else EXPERIENCE_WEBVIEW
     }
 
