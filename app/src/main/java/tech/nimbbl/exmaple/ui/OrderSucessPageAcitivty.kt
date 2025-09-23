@@ -1,7 +1,6 @@
 package tech.nimbbl.exmaple.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -38,7 +37,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_sucess_page)
-        
+
         // Setup toolbar
         setupToolbar()
 
@@ -60,7 +59,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        
+
         toolbar.setNavigationOnClickListener {
             finish()
         }
@@ -162,30 +161,21 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
 
 
     /**
-     * Parse payment response - now handles complete JSON response from SDK
+     * Parse payment response - simplified version
      */
     private fun parseComplexPaymentResponse(jsonString: String): MutableMap<String, Any> {
         val result: MutableMap<String, Any> = mutableMapOf()
 
-        // Validate input
         if (jsonString.isBlank()) {
-            Log.w("OrderSuccess", "parseComplexPaymentResponse: Empty or blank JSON string provided")
+            Log.w("OrderSuccess", "Empty JSON string provided")
             return result
         }
 
         try {
-            val jsonObject = JSONObject(jsonString)
+            val paymentData = JSONObject(jsonString)
 
-            // Debug: Log the actual JSON structure
-            Log.d("OrderSuccess", "JSON keys: ${jsonObject.keys().asSequence().toList()}")
-            Log.d("OrderSuccess", "JSON structure: ${jsonObject.toString(2)}")
-
-            // SDK now returns only payload content, so use it directly
-            val paymentData = jsonObject
-            
-            // Check if this is an encrypted response
+            // Check for encrypted response
             if (paymentData.has("encrypted_response")) {
-                Log.d("OrderSuccess", "Detected encrypted response")
                 result["is_encrypted"] = true
                 result["encrypted_response"] = safeGetString(paymentData, "encrypted_response", "")
                 result["status"] = "encrypted"
@@ -193,7 +183,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
                 return result
             }
 
-            // Extract key payment information with safe parsing from the correct data source
+            // Extract basic payment information
             result["status"] = safeGetString(paymentData, "status", "unknown")
             result["message"] = safeGetString(paymentData, "message", "")
             result["order_id"] = safeGetString(paymentData, "order_id", "")
@@ -206,55 +196,9 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
             result["sub_merchant_id"] = safeGetString(paymentData, "sub_merchant_id", "")
             result["is_callback"] = safeGetBoolean(paymentData, "is_callback", false)
 
-            // Debug: Print all extracted payment information
-            Log.d("OrderSuccess", "=== PAYMENT INFORMATION ===")
-            Log.d("OrderSuccess", "status: ${result["status"]}")
-            Log.d("OrderSuccess", "message: ${result["message"]}")
-            Log.d("OrderSuccess", "order_id: ${result["order_id"]}")
-            Log.d("OrderSuccess", "nimbbl_order_id: ${result["nimbbl_order_id"]}")
-            Log.d("OrderSuccess", "transaction_id: ${result["transaction_id"]}")
-            Log.d("OrderSuccess", "nimbbl_transaction_id: ${result["nimbbl_transaction_id"]}")
-            Log.d("OrderSuccess", "signature: ${result["signature"]}")
-            Log.d("OrderSuccess", "nimbbl_signature: ${result["nimbbl_signature"]}")
-            Log.d("OrderSuccess", "reason: ${result["reason"]}")
-            Log.d("OrderSuccess", "sub_merchant_id: ${result["sub_merchant_id"]}")
-            Log.d("OrderSuccess", "is_callback: ${result["is_callback"]}")
-
-            // Extract order details if available
-            Log.d("OrderSuccess", "=== CHECKING ORDER FIELD ===")
-            Log.d("OrderSuccess", "Has order field: ${paymentData.has("order")}")
-            
-            // Try to get order as JSONObject first, then as string if that fails
-            var order: JSONObject? = safeGetJSONObject(paymentData, "order")
-            Log.d("OrderSuccess", "Order JSONObject is null: ${order == null}")
-            
-            // If order is null, try to get it as a string and parse it
-            if (order == null) {
-                val orderString = safeGetString(paymentData, "order", "")
-                Log.d("OrderSuccess", "Order as string: ${orderString.take(100)}...")
-                if (orderString.isNotEmpty()) {
-                    try {
-                        // Check if it's a Map-like string format
-                        if (orderString.startsWith("{") && orderString.contains("=")) {
-                            Log.d("OrderSuccess", "Detected Map-like string format, converting to JSON")
-                            order = parseMapLikeStringToJSON(orderString)
-                        } else {
-                            // Try to parse as regular JSON
-                            order = JSONObject(orderString)
-                        }
-                        Log.d("OrderSuccess", "Successfully parsed order from string")
-                    } catch (e: Exception) {
-                        Log.e("OrderSuccess", "Error parsing order string: ${e.message}")
-                        Log.e("OrderSuccess", "Order string: ${orderString.take(200)}...")
-                    }
-                }
-            }
-            
+            // Extract order details
+            val order = parseNestedObject(paymentData, "order")
             if (order != null) {
-                Log.d("OrderSuccess", "=== ORDER DETAILS ===")
-                Log.d("OrderSuccess", "Order object keys: ${order.keys().asSequence().toList()}")
-                
-                // Extract order details with safe parsing
                 result["invoice_id"] = safeGetString(order, "invoice_id", "")
                 result["total_amount"] = safeGetDouble(order, "total_amount", 0.0)
                 result["currency"] = safeGetString(order, "currency", "INR")
@@ -271,50 +215,9 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
                 result["shopfront_domain"] = safeGetString(order, "shopfront_domain", "")
                 result["device_user_agent"] = safeGetString(order, "device_user_agent", "")
 
-                // Debug: Print all order details
-                Log.d("OrderSuccess", "invoice_id: ${result["invoice_id"]}")
-                Log.d("OrderSuccess", "total_amount: ${result["total_amount"]}")
-                Log.d("OrderSuccess", "currency: ${result["currency"]}")
-                Log.d("OrderSuccess", "order_date: ${result["order_date"]}")
-                Log.d("OrderSuccess", "cancellation_reason: ${result["cancellation_reason"]}")
-                Log.d("OrderSuccess", "grand_total: ${result["grand_total"]}")
-                Log.d("OrderSuccess", "amount_before_tax: ${result["amount_before_tax"]}")
-                Log.d("OrderSuccess", "tax: ${result["tax"]}")
-                Log.d("OrderSuccess", "convenience_fee: ${result["convenience_fee"]}")
-                Log.d("OrderSuccess", "offer_discount: ${result["offer_discount"]}")
-                Log.d("OrderSuccess", "attempts: ${result["attempts"]}")
-                Log.d("OrderSuccess", "referrer_platform: ${result["referrer_platform"]}")
-                Log.d("OrderSuccess", "referrer_platform_version: ${result["referrer_platform_version"]}")
-                Log.d("OrderSuccess", "shopfront_domain: ${result["shopfront_domain"]}")
-                Log.d("OrderSuccess", "device_user_agent: ${result["device_user_agent"]}")
-
-                // Extract shipping address if available
-                Log.d("OrderSuccess", "=== CHECKING SHIPPING ADDRESS FIELD ===")
-                var shippingAddress: JSONObject? = safeGetJSONObject(order, "shipping_address")
-                Log.d("OrderSuccess", "Shipping address JSONObject is null: ${shippingAddress == null}")
-                
-                // If shipping address is null, try to get it as a string and parse it
-                if (shippingAddress == null) {
-                    val shippingAddressString = safeGetString(order, "shipping_address", "")
-                    if (shippingAddressString.isNotEmpty()) {
-                        try {
-                            if (shippingAddressString.startsWith("{") && shippingAddressString.contains("=")) {
-                                Log.d("OrderSuccess", "Detected Map-like string format for shipping address")
-                                shippingAddress = parseMapLikeStringToJSON(shippingAddressString)
-                            } else {
-                                shippingAddress = JSONObject(shippingAddressString)
-                            }
-                        } catch (e: Exception) {
-                            Log.e("OrderSuccess", "Error parsing shipping address string: ${e.message}")
-                        }
-                    }
-                }
-                
+                // Extract shipping address
+                val shippingAddress = parseNestedObject(order, "shipping_address")
                 if (shippingAddress != null) {
-                    Log.d("OrderSuccess", "=== SHIPPING ADDRESS ===")
-                    Log.d("OrderSuccess", "Shipping address keys: ${shippingAddress.keys().asSequence().toList()}")
-
-                    // Extract shipping address details with safe parsing
                     result["shipping_address_1"] = safeGetString(shippingAddress, "address_1", "")
                     result["shipping_street"] = safeGetString(shippingAddress, "street", "")
                     result["shipping_area"] = safeGetString(shippingAddress, "area", "")
@@ -324,85 +227,45 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
                     result["shipping_country"] = safeGetString(shippingAddress, "country", "")
                     result["shipping_landmark"] = safeGetString(shippingAddress, "landmark", "")
                     result["shipping_address_type"] = safeGetString(shippingAddress, "address_type", "")
-
-                    // Debug: Print all shipping address details
-                    Log.d("OrderSuccess", "shipping_address_1: ${result["shipping_address_1"]}")
-                    Log.d("OrderSuccess", "shipping_street: ${result["shipping_street"]}")
-                    Log.d("OrderSuccess", "shipping_area: ${result["shipping_area"]}")
-                    Log.d("OrderSuccess", "shipping_city: ${result["shipping_city"]}")
-                    Log.d("OrderSuccess", "shipping_state: ${result["shipping_state"]}")
-                    Log.d("OrderSuccess", "shipping_pincode: ${result["shipping_pincode"]}")
-                    Log.d("OrderSuccess", "shipping_country: ${result["shipping_country"]}")
-                    Log.d("OrderSuccess", "shipping_landmark: ${result["shipping_landmark"]}")
-                    Log.d("OrderSuccess", "shipping_address_type: ${result["shipping_address_type"]}")
-                } else {
-                    Log.d("OrderSuccess", "No shipping address found")
                 }
 
-                // Extract device info if available
-                Log.d("OrderSuccess", "=== CHECKING DEVICE FIELD ===")
-                var device: JSONObject? = safeGetJSONObject(order, "device")
-                Log.d("OrderSuccess", "Device JSONObject is null: ${device == null}")
-                
-                // If device is null, try to get it as a string and parse it
-                if (device == null) {
-                    val deviceString = safeGetString(order, "device", "")
-                    if (deviceString.isNotEmpty()) {
-                        try {
-                            if (deviceString.startsWith("{") && deviceString.contains("=")) {
-                                Log.d("OrderSuccess", "Detected Map-like string format for device")
-                                device = parseMapLikeStringToJSON(deviceString)
-                            } else {
-                                device = JSONObject(deviceString)
-                            }
-                        } catch (e: Exception) {
-                            Log.e("OrderSuccess", "Error parsing device string: ${e.message}")
-                        }
-                    }
-                }
-                
+                // Extract device info
+                val device = parseNestedObject(order, "device")
                 if (device != null) {
-                    Log.d("OrderSuccess", "=== DEVICE INFORMATION ===")
-                    Log.d("OrderSuccess", "Device keys: ${device.keys().asSequence().toList()}")
-
-                    // Extract device information with safe parsing
                     result["device_browser_name"] = safeGetString(device, "browser_name", "")
                     result["device_name"] = safeGetString(device, "device_name", "")
                     result["device_os_name"] = safeGetString(device, "os_name", "")
                     result["device_ip_address"] = safeGetString(device, "ip_address", "")
-
-                    // Debug: Print all device information
-                    Log.d("OrderSuccess", "device_browser_name: ${result["device_browser_name"]}")
-                    Log.d("OrderSuccess", "device_name: ${result["device_name"]}")
-                    Log.d("OrderSuccess", "device_os_name: ${result["device_os_name"]}")
-                    Log.d("OrderSuccess", "device_ip_address: ${result["device_ip_address"]}")
-                } else {
-                    Log.d("OrderSuccess", "No device information found")
                 }
-            } else {
-                Log.d("OrderSuccess", "No order object found")
             }
 
-            Log.d(
-                "OrderSuccess",
-                "Parsed payment response: status=${result["status"]}, order_id=${result["order_id"]}"
-            )
-
-            // Debug: Print final summary of all extracted values
-            Log.d("OrderSuccess", "=== FINAL EXTRACTED VALUES SUMMARY ===")
-            for ((key, value) in result) {
-                Log.d("OrderSuccess", "$key: $value")
-            }
-
-        } catch (e: JSONException) {
-            Log.e("OrderSuccess", "parseComplexPaymentResponse: JSON parsing error: ${e.message}")
-            Log.e("OrderSuccess", "parseComplexPaymentResponse: JSON string: ${jsonString.take(200)}...")
         } catch (e: Exception) {
-            Log.e("OrderSuccess", "parseComplexPaymentResponse: Unexpected error: ${e.message}")
-            Log.e("OrderSuccess", "parseComplexPaymentResponse: JSON string: ${jsonString.take(200)}...")
+            Log.e("OrderSuccess", "Error parsing payment response: ${e.message}")
         }
 
         return result
+    }
+
+    /**
+     * Parse nested object that could be JSONObject or JSON string
+     */
+    private fun parseNestedObject(parent: JSONObject, key: String): JSONObject? {
+        // Try to get as JSONObject first
+        var nested = safeGetJSONObject(parent, key)
+
+        // If null, try to get as string and parse it as JSON
+        if (nested == null) {
+            val nestedString = safeGetString(parent, key, "")
+            if (nestedString.isNotEmpty()) {
+                try {
+                    nested = JSONObject(nestedString)
+                } catch (e: Exception) {
+                    Log.e("OrderSuccess", "Error parsing nested object '$key': ${e.message}")
+                }
+            }
+        }
+
+        return nested
     }
 
     /**
@@ -453,99 +316,6 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
     }
 
-    /**
-     * Parse Map-like string format to JSONObject
-     * Example: {key1=value1, key2=value2, nested={nested_key=nested_value}}
-     */
-    private fun parseMapLikeStringToJSON(mapString: String): JSONObject? {
-        return try {
-            Log.d("OrderSuccess", "Parsing Map-like string: ${mapString.take(100)}...")
-            
-            // Remove outer braces
-            val content = mapString.trim().removePrefix("{").removeSuffix("}")
-            val jsonObject = JSONObject()
-            
-            // Split by comma, but be careful with nested objects
-            val keyValuePairs = mutableListOf<String>()
-            var currentPair = ""
-            var braceCount = 0
-            
-            for (char in content) {
-                when (char) {
-                    ',' -> {
-                        if (braceCount == 0) {
-                            keyValuePairs.add(currentPair.trim())
-                            currentPair = ""
-                        } else {
-                            currentPair += char
-                        }
-                    }
-                    '{' -> {
-                        braceCount++
-                        currentPair += char
-                    }
-                    '}' -> {
-                        braceCount--
-                        currentPair += char
-                    }
-                    else -> currentPair += char
-                }
-            }
-            
-            // Add the last pair
-            if (currentPair.isNotEmpty()) {
-                keyValuePairs.add(currentPair.trim())
-            }
-            
-            // Parse each key-value pair
-            for (pair in keyValuePairs) {
-                val equalIndex = pair.indexOf('=')
-                if (equalIndex > 0) {
-                    val key = pair.substring(0, equalIndex).trim()
-                    val value = pair.substring(equalIndex + 1).trim()
-                    
-                    // Handle different value types
-                    when {
-                        value == "null" -> jsonObject.put(key, JSONObject.NULL)
-                        value.startsWith("{") && value.endsWith("}") -> {
-                            // Nested object
-                            val nestedJson = parseMapLikeStringToJSON(value)
-                            if (nestedJson != null) {
-                                jsonObject.put(key, nestedJson)
-                            } else {
-                                jsonObject.put(key, value)
-                            }
-                        }
-                        value.startsWith("\"") && value.endsWith("\"") -> {
-                            // String value (remove quotes)
-                            jsonObject.put(key, value.substring(1, value.length - 1))
-                        }
-                        value.matches(Regex("^-?\\d+\\.\\d+$")) -> {
-                            // Double value
-                            jsonObject.put(key, value.toDouble())
-                        }
-                        value.matches(Regex("^-?\\d+$")) -> {
-                            // Integer value
-                            jsonObject.put(key, value.toInt())
-                        }
-                        value == "true" -> jsonObject.put(key, true)
-                        value == "false" -> jsonObject.put(key, false)
-                        else -> {
-                            // Default to string
-                            jsonObject.put(key, value)
-                        }
-                    }
-                }
-            }
-            
-            Log.d("OrderSuccess", "Successfully parsed Map-like string to JSON")
-            jsonObject
-        } catch (e: Exception) {
-            Log.e("OrderSuccess", "Error parsing Map-like string: ${e.message}")
-            Log.e("OrderSuccess", "Map string: ${mapString.take(200)}...")
-            null
-        }
-    }
 
     /**
      * Simple JSON parsing fallback
@@ -576,7 +346,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
             displayEncryptedResponse()
             return
         }
-        
+
         // Use parsed data if available, otherwise fallback to intent data
         val displayOrderId = parsedPaymentData["order_id"]?.toString() ?: "Unknown"
         val displayStatus = parsedPaymentData["status"]?.toString() ?: "Unknown"
@@ -611,7 +381,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         txtOrderId.text = displayOrderId
         txtStatus.text = displayStatus
         updateStatusTextColor(displayStatus)
-        
+
         // Show/hide amount field based on data availability
         val amountLayout = findViewById<LinearLayout>(R.id.amount_layout)
         if (totalAmount.isNotEmpty()) {
@@ -620,7 +390,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         } else {
             amountLayout.visibility = View.GONE
         }
-        
+
         // Show/hide invoice ID field based on data availability
         val invoiceLayout = findViewById<LinearLayout>(R.id.invoice_layout)
         if (invoiceId.isNotEmpty()) {
@@ -629,7 +399,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         } else {
             invoiceLayout.visibility = View.GONE
         }
-        
+
         // Show/hide order date field based on data availability
         val orderDateLayout = findViewById<LinearLayout>(R.id.order_date_layout)
         val formattedDate = formatOrderDate(orderDate)
@@ -641,8 +411,8 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
 
         // Update detailed status information
-        updateDetailedStatus(reason, cancellationReason, attempts, referrerPlatform, 
-            referrerPlatformVersion, deviceName, deviceOsName, deviceIpAddress, 
+        updateDetailedStatus(reason, cancellationReason, attempts, referrerPlatform,
+            referrerPlatformVersion, deviceName, deviceOsName, deviceIpAddress,
             shippingCity, shippingState, shippingCountry, shippingPincode)
 
         // Update action buttons based on status
@@ -732,10 +502,10 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     }
 
     private fun updateDetailedStatus(reason: String, cancellationReason: String, attempts: String,
-                                   referrerPlatform: String, referrerPlatformVersion: String,
-                                   deviceName: String, deviceOsName: String, deviceIpAddress: String,
-                                   shippingCity: String, shippingState: String, shippingCountry: String,
-                                   shippingPincode: String) {
+                                     referrerPlatform: String, referrerPlatformVersion: String,
+                                     deviceName: String, deviceOsName: String, deviceIpAddress: String,
+                                     shippingCity: String, shippingState: String, shippingCountry: String,
+                                     shippingPincode: String) {
         val detailedInfo = buildString {
             if (reason.isNotEmpty()) {
                 append("Reason: $reason\n\n")
@@ -776,21 +546,21 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     private fun displayEncryptedResponse() {
         // Update status icon and colors for encrypted response
         updateStatusUI("encrypted")
-        
+
         // Update status title and message
         updateStatusTitleAndMessage("encrypted", "Encrypted response received. Please handle decryption on your server.")
-        
+
         // Hide order details since we can't parse them
         val orderDetailsCard = findViewById<com.google.android.material.card.MaterialCardView>(R.id.order_details_card)
         orderDetailsCard.visibility = View.GONE
-        
+
         // Hide additional details
         val additionalDetailsCard = findViewById<com.google.android.material.card.MaterialCardView>(R.id.additional_details_card)
         additionalDetailsCard.visibility = View.GONE
-        
+
         // Update action buttons for encrypted response
         updateActionButtons("encrypted")
-        
+
         // Log the encrypted response for debugging
         val encryptedResponse = parsedPaymentData["encrypted_response"]?.toString() ?: ""
         Log.d("OrderSuccess", "Encrypted response received: ${encryptedResponse.take(100)}...")
@@ -799,7 +569,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     private fun updateActionButtons(status: String) {
         val btnPrimaryAction = findViewById<MaterialButton>(R.id.btn_primary_action)
         val statusLower = status.lowercase()
-        
+
         when (statusLower) {
             "success", "completed" -> {
                 btnPrimaryAction.text = "Continue"
@@ -829,20 +599,20 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
             try {
                 // Simple date formatting - you can enhance this with proper date parsing
                 orderDate.substring(0, 19) // Show only date and time part
-        } catch (e: Exception) {
+            } catch (e: Exception) {
                 orderDate
             }
         } else {
             "N/A"
         }
     }
-    
+
     private fun setupSafeArea() {
-        val rootView = findViewById<android.view.View>(android.R.id.content)
+        val rootView = findViewById<View>(android.R.id.content)
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            
+
             // Add top padding to position app bar below status bar
             // This ensures the app bar is not hidden behind the status bar
             v.setPadding(
