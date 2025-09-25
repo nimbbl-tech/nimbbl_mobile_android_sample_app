@@ -30,6 +30,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     private lateinit var txtStatus: TextView
     private lateinit var txtAmount: TextView
     private lateinit var txtInvoiceId: TextView
+    private lateinit var txtTransactionId: TextView
     private lateinit var txtOrderDate: TextView
     private lateinit var txtDetailedStatus: TextView
 
@@ -74,6 +75,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         val txtStatus = findViewById<TextView>(R.id.txt_status)
         val txtAmount = findViewById<TextView>(R.id.txt_amount)
         val txtInvoiceId = findViewById<TextView>(R.id.txt_invoice_id)
+        val txtTransactionId = findViewById<TextView>(R.id.txt_transaction_id)
         val txtOrderDate = findViewById<TextView>(R.id.txt_order_date)
         val txtDetailedStatus = findViewById<TextView>(R.id.txt_detailed_status)
 
@@ -85,6 +87,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         this.txtStatus = txtStatus
         this.txtAmount = txtAmount
         this.txtInvoiceId = txtInvoiceId
+        this.txtTransactionId = txtTransactionId
         this.txtOrderDate = txtOrderDate
         this.txtDetailedStatus = txtDetailedStatus
     }
@@ -356,6 +359,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         val grandTotal = parsedPaymentData["grand_total"]?.toString() ?: ""
         val currency = parsedPaymentData["currency"]?.toString() ?: "INR"
         val invoiceId = parsedPaymentData["invoice_id"]?.toString() ?: ""
+        val transactionId = parsedPaymentData["transaction_id"]?.toString() ?: parsedPaymentData["nimbbl_transaction_id"]?.toString() ?: ""
         val subMerchantId = parsedPaymentData["sub_merchant_id"]?.toString() ?: ""
         val orderDate = parsedPaymentData["order_date"]?.toString() ?: ""
         val cancellationReason = parsedPaymentData["cancellation_reason"]?.toString() ?: ""
@@ -400,6 +404,15 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
             invoiceLayout.visibility = View.GONE
         }
 
+        // Show/hide transaction ID field based on data availability
+        val transactionIdLayout = findViewById<LinearLayout>(R.id.transaction_id_layout)
+        if (transactionId.isNotEmpty()) {
+            txtTransactionId.text = transactionId
+            transactionIdLayout.visibility = View.VISIBLE
+        } else {
+            transactionIdLayout.visibility = View.GONE
+        }
+
         // Show/hide order date field based on data availability
         val orderDateLayout = findViewById<LinearLayout>(R.id.order_date_layout)
         val formattedDate = formatOrderDate(orderDate)
@@ -421,6 +434,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         // Log additional parsed information for debugging
         Log.d("OrderSuccess", "Displaying order info:")
         Log.d("OrderSuccess", "  Order ID: $displayOrderId")
+        Log.d("OrderSuccess", "  Transaction ID: $transactionId")
         Log.d("OrderSuccess", "  Status: $displayStatus")
         Log.d("OrderSuccess", "  Message: $message")
         Log.d("OrderSuccess", "  Reason: $reason")

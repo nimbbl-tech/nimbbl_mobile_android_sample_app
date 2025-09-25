@@ -234,6 +234,35 @@
 
                     </LinearLayout>
 
+                    <!-- Transaction ID -->
+                    <LinearLayout
+                        android:id="@+id/transaction_id_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Transaction ID"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/noto_sans" />
+
+                        <TextView
+                            android:id="@+id/txt_transaction_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/noto_sans" />
+
+                    </LinearLayout>
+
                     <!-- Order Date -->
                     <LinearLayout
                         android:id="@+id/order_date_layout"
