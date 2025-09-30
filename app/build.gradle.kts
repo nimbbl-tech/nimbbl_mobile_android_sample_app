@@ -60,8 +60,8 @@ dependencies {
     // WebView SDK dependency (includes Core API SDK transitively)
     //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
     
-    // SDK integrations
+    // SDK integrations - Production version
     //implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.12")
-    implementation("org.bitbucket.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.1")
+    implementation("com.github.tools21:nimbbl_mobile_kit_android_webview_sdk:v4.0.2")
 }
 
