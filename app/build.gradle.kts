@@ -57,11 +57,11 @@ dependencies {
     api("com.squareup.okhttp3:okhttp")
     api("com.squareup.okhttp3:logging-interceptor")
 
-    // WebView SDK dependency (includes Core API SDK transitively)
-    //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
+    // Use fat AAR that includes Core API SDK
+    implementation(files("libs/nimbbl_mobile_kit_android_webview_sdk-fat-release.aar"))
     
     // SDK integrations - Production version
     //implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.12")
-    implementation("org.bitbucket.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.3")
+    //implementation("org.bitbucket.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.3")
 }
 
