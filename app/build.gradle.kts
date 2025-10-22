@@ -61,7 +61,7 @@ dependencies {
     //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
     
     // SDK integrations - Production version
-    //implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:3.0.12")
-    implementation("org.bitbucket.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.3")
+    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.4")
+    //implementation("org.bitbucket.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.3")
 }
 
