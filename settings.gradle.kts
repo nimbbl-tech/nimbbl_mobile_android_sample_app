@@ -11,9 +11,6 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url = uri("https://gitlab.com/api/v4/projects/25847308/packages/maven")
-        }
-        maven {
             url = uri("https://jitpack.io")
         }
     }
@@ -25,9 +22,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://gitlab.com/api/v4/projects/25847308/packages/maven")
-        }
-        maven {
             url = uri("https://jitpack.io")
         }
     }
@@ -36,13 +30,13 @@ dependencyResolutionManagement {
 rootProject.name = "Nimbbl-Android-Sample-App"
 include(":app")
 
-/*
+
 // Include Core API SDK
-include(":nimbbl_mobile_kit_core_api_sdk")
-project(":nimbbl_mobile_kit_core_api_sdk").projectDir = file("/Users/sandeepyadav/StudioProjects/nimbbl_mobile_kit_core_api_sdk")
+//include(":nimbbl_mobile_kit_core_api_sdk")
+//project(":nimbbl_mobile_kit_core_api_sdk").projectDir = file("/Users/sandeepyadav/StudioProjects/nimbbl_mobile_kit_core_api_sdk")
 
 // Include WebView SDK (Core API SDK will be included transitively)
-include(":nimbbl_mobile_kit_android_webview_sdk")
-project(":nimbbl_mobile_kit_android_webview_sdk").projectDir = file("/Users/sandeepyadav/StudioProjects/nimbbl_mobile_kit_android_webview_sdk")
-*/
+//include(":nimbbl_mobile_kit_android_webview_sdk")
+//project(":nimbbl_mobile_kit_android_webview_sdk").projectDir = file("/Users/sandeepyadav/StudioProjects/nimbbl_mobile_kit_android_webview_sdk")
+
 

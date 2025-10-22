@@ -228,7 +228,7 @@ class NimbblConfigActivity : AppCompatActivity() {
         )
         
         // Update SDK environment
-        NimbblCheckoutSDK.instance?.setEnvironmentUrl(baseUrl)
+        NimbblCheckoutSDK.getInstance().setEnvironmentUrl(baseUrl)
         
         val isSuccess = editor.commit()
         

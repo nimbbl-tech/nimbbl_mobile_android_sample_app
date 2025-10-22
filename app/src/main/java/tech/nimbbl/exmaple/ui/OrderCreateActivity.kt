@@ -1,13 +1,11 @@
 package tech.nimbbl.exmaple.ui
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,8 +20,6 @@ import tech.nimbbl.exmaple.databinding.ActivityOrderCreateBinding
 import tech.nimbbl.exmaple.ui.adapter.PaymentCustomisationSpinAdapter
 import tech.nimbbl.exmaple.ui.adapter.SubPaymentCustomisationSpinAdapter
 import tech.nimbbl.exmaple.ui.adapter.headerCustomisationSpinAdapter
-import tech.nimbbl.exmaple.utils.AppConstants.EXTRA_ORDER_ID
-import tech.nimbbl.exmaple.utils.AppConstants.EXTRA_STATUS
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.APP_PREFERENCE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
@@ -35,24 +31,23 @@ import tech.nimbbl.exmaple.utils.getPaymentFlow
 import tech.nimbbl.exmaple.utils.getPaymentModeCode
 import tech.nimbbl.exmaple.utils.getProductID
 import tech.nimbbl.exmaple.utils.getWalletCode
-import tech.nimbbl.webviewsdk.constants.PaymentConstants
 import tech.nimbbl.webviewsdk.core.NimbblCheckoutSDK
-import tech.nimbbl.webviewsdk.core.NimbblOrderCreation
+import tech.nimbbl.webviewsdk.core.NimbblShopOrderCreation
 import tech.nimbbl.webviewsdk.models.NimbblCheckoutOptions
 import tech.nimbbl.webviewsdk.models.interfaces.NimbblCheckoutPaymentListener
 import java.io.IOException
 
 
-class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
+class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
     private lateinit var binding: ActivityOrderCreateBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         binding = ActivityOrderCreateBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        
+
         // Set status bar color to black using modern approach (after setContentView)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             window.insetsController?.let { controller ->
@@ -65,7 +60,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             @Suppress("DEPRECATION")
             window.statusBarColor = getColor(R.color.black)
         }
-        
+
         // Setup safe area handling
         setupSafeArea()
         initialisation()
@@ -130,51 +125,52 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             binding.spnPaymentMode.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
-                        parent: AdapterView<*>, view: View, position: Int, id: Long
+                        parent: AdapterView<*>, view: View?, position: Int, id: Long
                     ) {
-                        when (position) {
-                            0 -> {
-                                binding.tvSubpaymentTitle.visibility = View.GONE
-                                binding.spnSubPaymentMode.visibility = View.GONE
+                        try {
+                            when (position) {
+                                0 -> {
+                                    binding.tvSubpaymentTitle.visibility = View.GONE
+                                    binding.spnSubPaymentMode.visibility = View.GONE
+                                }
+
+                                1 -> {
+                                    binding.tvSubpaymentTitle.visibility = View.VISIBLE
+                                    binding.spnSubPaymentMode.visibility = View.VISIBLE
+                                    val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
+                                        this@OrderCreateActivity,
+                                        resources.getStringArray(R.array.sub_payment_type_netbanking)
+                                    )
+                                    binding.spnSubPaymentMode.adapter = subPaymentAdapter
+                                }
+
+                                2 -> {
+                                    binding.tvSubpaymentTitle.visibility = View.VISIBLE
+                                    binding.spnSubPaymentMode.visibility = View.VISIBLE
+                                    val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
+                                        this@OrderCreateActivity,
+                                        resources.getStringArray(R.array.sub_payment_type_wallet)
+                                    )
+                                    binding.spnSubPaymentMode.adapter = subPaymentAdapter
+                                }
+
+                                3 -> {
+                                    binding.tvSubpaymentTitle.visibility = View.GONE
+                                    binding.spnSubPaymentMode.visibility = View.GONE
+                                }
+
+                                4 -> {
+                                    binding.tvSubpaymentTitle.visibility = View.VISIBLE
+                                    binding.spnSubPaymentMode.visibility = View.VISIBLE
+                                    val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
+                                        this@OrderCreateActivity,
+                                        resources.getStringArray(R.array.sub_payment_type_upi)
+                                    )
+                                    binding.spnSubPaymentMode.adapter = subPaymentAdapter
+                                }
                             }
-
-                            1 -> {
-                                binding.tvSubpaymentTitle.visibility = View.VISIBLE
-                                binding.spnSubPaymentMode.visibility = View.VISIBLE
-                                val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
-                                    this@OrderCreateActivity,
-                                    resources.getStringArray(R.array.sub_payment_type_netbanking)
-                                )
-                                binding.spnSubPaymentMode.adapter = subPaymentAdapter
-                            }
-
-                            2 -> {
-
-                                binding.tvSubpaymentTitle.visibility = View.VISIBLE
-                                binding.spnSubPaymentMode.visibility = View.VISIBLE
-                                val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
-                                    this@OrderCreateActivity,
-                                    resources.getStringArray(R.array.sub_payment_type_wallet)
-                                )
-                                binding.spnSubPaymentMode.adapter = subPaymentAdapter
-                            }
-
-                            3 -> {
-
-                                binding.tvSubpaymentTitle.visibility = View.GONE
-                                binding.spnSubPaymentMode.visibility = View.GONE
-                            }
-
-                            4 -> {
-
-                                binding.tvSubpaymentTitle.visibility = View.VISIBLE
-                                binding.spnSubPaymentMode.visibility = View.VISIBLE
-                                val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
-                                    this@OrderCreateActivity,
-                                    resources.getStringArray(R.array.sub_payment_type_upi)
-                                )
-                                binding.spnSubPaymentMode.adapter = subPaymentAdapter
-                            }
+                        } catch (e: Exception) {
+                            Log.e("OrderCreate", "Error in payment mode selection: ${e.message}", e)
                         }
                     }
 
@@ -185,20 +181,24 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             binding.spnAppCurrencyFormat.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
-                        parent: AdapterView<*>, view: View, position: Int, id: Long
+                        parent: AdapterView<*>, view: View?, position: Int, id: Long
                     ) {
-                        when (position) {
-                            0 -> {
-                                Log.d("SAN", "00000")
-                                paymentAdapter.setData(resources.getStringArray(R.array.payment_type))
-                                binding.spnPaymentMode.isEnabled = true
-                            }
+                        try {
+                            when (position) {
+                                0 -> {
+                                    Log.d("SAN", "00000")
+                                    paymentAdapter.setData(resources.getStringArray(R.array.payment_type))
+                                    binding.spnPaymentMode.isEnabled = true
+                                }
 
-                            else -> {
-                                Log.d("SAN", "$position$position$position")
-                                paymentAdapter.setData(resources.getStringArray(R.array.payment_type_card))
-                                binding.spnPaymentMode.isEnabled = false
+                                else -> {
+                                    Log.d("SAN", "$position$position$position")
+                                    paymentAdapter.setData(resources.getStringArray(R.array.payment_type_card))
+                                    binding.spnPaymentMode.isEnabled = false
+                                }
                             }
+                        } catch (e: Exception) {
+                            Log.e("OrderCreate", "Error in currency format selection: ${e.message}", e)
                         }
                     }
 
@@ -225,7 +225,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
         binding.btnBuyNow.setOnClickListener {
             // Show loading state
             showLoading(true)
-            
+
             val skuAmount = Integer.parseInt(binding.txtAmount.text.toString())
             val userFirstName = binding.edtUserFirstName.text.toString().ifEmpty { "" }
             val userEmailId = binding.edtUserEmailId.text.toString().ifEmpty { "" }
@@ -242,10 +242,10 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                     val formattedShopBaseUrl = AppUtilExtensions.formatUrl(shopBaseUrl)
                     Log.d("OrderCreate", "Using shop base URL: $formattedShopBaseUrl")
 
-                    NimbblCheckoutSDK.instance?.setEnvironmentUrl(formattedShopBaseUrl)
+                    NimbblCheckoutSDK.getInstance().setEnvironmentUrl(formattedShopBaseUrl)
 
                     // Use the new order creation functionality from WebView SDK
-                    val response = NimbblOrderCreation.createOrder(
+                    val response = NimbblShopOrderCreation.createShopOrder(
                         formattedShopBaseUrl,
                         skuAmount,
                         userEmailId,
@@ -255,7 +255,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                         getPaymentModeCode(binding.spnPaymentMode.selectedItem.toString(), this@OrderCreateActivity),
                         getBankCode(binding.spnPaymentMode.selectedItem.toString(), this@OrderCreateActivity)
                     )
-                    
+
                     if (response?.isSuccessful == true) {
                         val orderResponse = response.body()
                         if (orderResponse != null) {
@@ -265,16 +265,16 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                                 makePayment(orderResponse.token)
                             } else {
                                 Log.e("OrderCreate", "Order token is null or empty")
-                                showToastSafely(
+                                showToast(
                                     this@OrderCreateActivity,
-                                    R.string.unable_to_create_order
+                                    resources.getString(R.string.unable_to_create_order)
                                 )
                                 showLoading(false)
                             }
                         } else {
-                            showToastSafely(
+                            showToast(
                                 this@OrderCreateActivity,
-                                R.string.order_created_null_response
+                                resources.getString(R.string.order_created_null_response)
                             )
                             // Hide loading state on error
                             showLoading(false)
@@ -283,21 +283,21 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                         try {
                             val errorMessage = response?.errorBody()?.string()
                             Log.e("OrderCreate", "Error response: $errorMessage")
-                            
+
                             if (!errorMessage.isNullOrEmpty()) {
                                 try {
                                     val jsonObj = JSONObject(errorMessage)
                                     if (jsonObj.has("error")) {
                                         val errorObj = jsonObj.getJSONObject("error")
                                         if (errorObj.has("nimbbl_consumer_message")) {
-                                                                                    showToastSafely(
-                                            this@OrderCreateActivity,
-                                            errorObj.getString("nimbbl_consumer_message")
-                                        )
-                                        } else {
-                                            showToastSafely(
+                                            showToast(
                                                 this@OrderCreateActivity,
-                                                R.string.unable_to_create_order
+                                                errorObj.getString("nimbbl_consumer_message")
+                                            )
+                                        } else {
+                                            showToast(
+                                                this@OrderCreateActivity,
+                                                resources.getString(R.string.unable_to_create_order)
                                             )
                                         }
                                     } else {
@@ -310,21 +310,21 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                                     Log.e("OrderCreate", "JSON parsing error: ${jsonException.message}", jsonException)
                                     // If it's not valid JSON, show the raw error message
                                     if (errorMessage.contains("Traceback")) {
-                                        showToastSafely(
+                                        showToast(
                                             this@OrderCreateActivity,
-                                            R.string.unable_to_create_order
+                                            resources.getString(R.string.unable_to_create_order)
                                         )
                                     } else {
-                                        showToastSafely(
+                                        showToast(
                                             this@OrderCreateActivity,
-                                            R.string.unable_to_create_order
+                                            resources.getString(R.string.unable_to_create_order)
                                         )
                                     }
                                 }
                             } else {
-                                showToastSafely(
+                                showToast(
                                     this@OrderCreateActivity,
-                                    R.string.unable_to_create_order
+                                    resources.getString(R.string.unable_to_create_order)
                                 )
                             }
                         } catch (e: Exception) {
@@ -340,23 +340,23 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
 
                 } catch (e: IOException) {
                     Log.e("OrderCreate", "Network error: ${e.message}", e)
-                    showToastSafely(
+                    showToast(
                         this@OrderCreateActivity,
-                        R.string.network_error
+                        resources.getString(R.string.network_error)
                     )
                     showLoading(false)
                 } catch (e: JSONException) {
                     Log.e("OrderCreate", "JSON parsing error: ${e.message}", e)
-                    showToastSafely(
+                    showToast(
                         this@OrderCreateActivity,
-                        R.string.invalid_response_format
+                        resources.getString(R.string.invalid_response_format)
                     )
                     showLoading(false)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    showToastSafely(
-                        this@OrderCreateActivity, 
-                        R.string.unable_to_create_order_error, e.toString()
+                    showToast(
+                        this@OrderCreateActivity,
+                        resources.getString(R.string.unable_to_create_order_error)
                     )
                     // Hide loading state on exception
                     showLoading(false)
@@ -375,21 +375,21 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             try {
                 if (isLoading) {
                     // Show loading state
-                    binding?.btnBuyNow?.apply {
+                    binding.btnBuyNow.apply {
                         isEnabled = false
                         text = "" // Hide button text when loader is showing
                     }
-                    
+
                     // Show circular progress indicator
                     binding?.progressLoader?.visibility = View.VISIBLE
-                    
+
                 } else {
                     // Hide loading state
                     binding?.btnBuyNow?.apply {
                         isEnabled = true
                         text = getString(R.string.pay_now) // Restore original button text
                     }
-                    
+
                     // Hide circular progress indicator
                     binding?.progressLoader?.visibility = View.GONE
                 }
@@ -411,13 +411,13 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
     ) {
         // Hide loading state as SDK will handle its own UI
         showLoading(false)
-        
+
         val builder = NimbblCheckoutOptions.Builder()
-        
+
         // Add null check for SharedPreferences
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val appMode = preferences?.getString(SAMPLE_APP_MODE, "") ?: ""
-        
+
         if (appMode.equals(getString(R.string.value_webview))) {
             val options =
                 builder.setOrderToken(orderToken)
@@ -426,123 +426,67 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                     .setPaymentFlow(getPaymentFlow(binding?.spnSubPaymentMode?.selectedItem?.toString() ?: "", this@OrderCreateActivity))
                     .setWalletCode(getWalletCode(binding?.spnSubPaymentMode?.selectedItem?.toString() ?: "", this@OrderCreateActivity))
                     .build()
-            NimbblCheckoutSDK.instance?.init(this)
-            NimbblCheckoutSDK.instance?.checkout(options)
+            NimbblCheckoutSDK.getInstance().init(this)
+            NimbblCheckoutSDK.getInstance().checkout(options)
         } else {
             // Handle other payment modes
             Log.w("OrderCreate", "Unsupported payment mode: $appMode")
-            showToastSafely(
+            showToast(
                 this@OrderCreateActivity,
-                R.string.unsupported_payment_mode
+                resources.getString(R.string.unsupported_payment_mode)
             )
         }
     }
-    
-    /**
-     * Get string resource safely with fallback
-     * @param resourceId Resource ID
-     * @param formatArgs Format arguments
-     * @return String resource or fallback
-     */
-    private fun getStringSafely(resourceId: Int, vararg formatArgs: Any?): String {
-        return try {
-            getString(resourceId, *formatArgs)
-        } catch (e: Exception) {
-            Log.e("OrderCreate", "String resource not found: $resourceId", e)
-            when (resourceId) {
-                R.string.network_error -> "Network error occurred. Please check your connection and try again."
-                R.string.invalid_response_format -> "Invalid response format received from server."
-                R.string.unable_to_create_order -> "Unable to create order. Please try again."
-                R.string.unable_to_create_order_error -> "Unable to create order: %s"
-                R.string.order_created_null_response -> "Order created but received null response."
-                R.string.unsupported_payment_mode -> "Unsupported payment mode selected."
-                R.string.pay_now -> "Pay Now"
-                R.string.value_webview -> "webview"
-                R.string.value_cash_free_config -> "cash_free_config"
-                R.string.value_razorpay_config -> "razorpay_config"
-                R.string.value_paytm_config -> "paytm_config"
-                R.string.value_phonepe_config -> "phonepe_config"
-                R.string.value_amazonpay_config -> "amazonpay_config"
-                R.string.value_mobikwik_config -> "mobikwik_config"
-                R.string.value_freecharge_config -> "freecharge_config"
-                R.string.value_olamoney_config -> "olamoney_config"
-                R.string.value_airtelmoney_config -> "airtelmoney_config"
-                R.string.value_jiomoney_config -> "jiomoney_config"
-                R.string.value_icicimobile_config -> "icicimobile_config"
-                R.string.value_hdfcpay_config -> "hdfcpay_config"
-                R.string.value_sbiyono_config -> "sbiyono_config"
-                R.string.value_axismobile_config -> "axismobile_config"
-                R.string.value_kotakmobile_config -> "kotakmobile_config"
-                R.string.value_unionbankmobile_config -> "unionbankmobile_config"
-                else -> "Error occurred"
-            }
-        }
-    }
-    
-    /**
-     * Show toast safely with null checks and safe string handling
-     * @param context Context
-     * @param message Message to show
-     */
-    private fun showToastSafely(context: Context?, message: String) {
-        try {
-            context?.let {
-                runOnUiThread {
-                    try {
-                        Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Log.e("OrderCreate", "Error showing toast: ${e.message}", e)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("OrderCreate", "Error in showToastSafely: ${e.message}", e)
-        }
-    }
-    
-    /**
-     * Show toast with safe string handling
-     * @param context Context
-     * @param resourceId String resource ID
-     * @param formatArgs Format arguments
-     */
-    private fun showToastSafely(context: Context?, resourceId: Int, vararg formatArgs: Any?) {
-        val message = getStringSafely(resourceId, *formatArgs)
-        showToastSafely(context, message)
-    }
-
-    override fun onPaymentFailed(data: String) {
-        // Ensure loading state is hidden on payment failure
-        showLoading(false)
-        
-        try {
-            // Try to parse as JSON first
-            val jsonObject = JSONObject(data)
-            val merchantMessage = jsonObject.optString(PaymentConstants.key_nimbbl_merchant_message, data)
-            
-            // Show the merchant message to the user
-            showToast(this, merchantMessage)
-            
-        } catch (e: Exception) {
-            // If parsing fails, treat as legacy error message
-            showToast(this, getString(R.string.order_creation_failed, data))
-        }
-    }
 
 
-    override fun onPaymentSuccess(data: MutableMap<String, Any>) {
+    override fun onCheckoutResponse(data: MutableMap<String, Any>) {
         // Ensure loading state is hidden on payment success
         showLoading(false)
-        showToast(
-            this, 
-            getString(R.string.payment_success_message, 
-                data["order_id"].toString(), 
-                data["status"].toString()
-            )
-        )
+
+        // Log the raw data for debugging
+        Log.d("OrderCreate", "Received checkout response: $data")
+
         val intent = Intent(this, OrderSucessPageAcitivty::class.java)
-        intent.putExtra(EXTRA_ORDER_ID, data["order_id"].toString())
-        intent.putExtra(EXTRA_STATUS, data["status"].toString())
+
+        // Pass the raw JSON data if available for complex parsing
+        // The data map contains the parsed JSON, so we need to reconstruct it or pass the original
+        // For now, we'll pass the data map as a JSON string
+        try {
+            val jsonString = convertMapToJsonString(data)
+            intent.putExtra("raw_json_data", jsonString)
+            Log.d("OrderCreate", "Passing raw JSON data to success page: $jsonString")
+        } catch (e: Exception) {
+            Log.e("OrderCreate", "Error converting data to JSON: ${e.message}")
+        }
+
         startActivity(intent)
+    }
+
+    /**
+     * Convert Map to JSON string for passing to success page
+     */
+    private fun convertMapToJsonString(data: MutableMap<String, Any>): String {
+        return try {
+            val jsonObject = JSONObject()
+            for ((key, value) in data) {
+                when (value) {
+                    is String -> jsonObject.put(key, value)
+                    is Number -> jsonObject.put(key, value)
+                    is Boolean -> jsonObject.put(key, value)
+                    is Map<*, *> -> {
+                        val nestedJson = JSONObject()
+                        for ((nestedKey, nestedValue) in value as Map<String, Any>) {
+                            nestedJson.put(nestedKey, nestedValue)
+                        }
+                        jsonObject.put(key, nestedJson)
+                    }
+                    else -> jsonObject.put(key, value.toString())
+                }
+            }
+            jsonObject.toString()
+        } catch (e: Exception) {
+            Log.e("OrderCreate", "Error converting map to JSON: ${e.message}")
+            "{}"
+        }
     }
 }
