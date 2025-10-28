@@ -11,7 +11,7 @@ android {
         applicationId = "tech.nimbbl.exmaple"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
+        versionCode = 5
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -61,7 +61,6 @@ dependencies {
     //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
     
     // SDK integrations - Production version
-    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.4")
-    //implementation("org.bitbucket.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.3")
+    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.5")
 }
 
