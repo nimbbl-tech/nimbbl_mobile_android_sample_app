@@ -44,6 +44,7 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityOrderCreateBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -240,7 +241,6 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
 
                     // Format the URL to ensure proper formatting
                     val formattedShopBaseUrl = AppUtilExtensions.formatUrl(shopBaseUrl)
-                    Log.d("OrderCreate", "Using shop base URL: $formattedShopBaseUrl")
 
                     NimbblCheckoutSDK.getInstance().setEnvironmentUrl(formattedShopBaseUrl)
 
@@ -417,7 +417,6 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
         // Add null check for SharedPreferences
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val appMode = preferences?.getString(SAMPLE_APP_MODE, "") ?: ""
-
         if (appMode.equals(getString(R.string.value_webview))) {
             val options =
                 builder.setOrderToken(orderToken)
@@ -443,8 +442,6 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
         // Ensure loading state is hidden on payment success
         showLoading(false)
 
-        // Log the raw data for debugging
-        Log.d("OrderCreate", "Received checkout response: $data")
 
         val intent = Intent(this, OrderSucessPageAcitivty::class.java)
 
@@ -454,7 +451,6 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
         try {
             val jsonString = convertMapToJsonString(data)
             intent.putExtra("raw_json_data", jsonString)
-            Log.d("OrderCreate", "Passing raw JSON data to success page: $jsonString")
         } catch (e: Exception) {
             Log.e("OrderCreate", "Error converting data to JSON: ${e.message}")
         }
