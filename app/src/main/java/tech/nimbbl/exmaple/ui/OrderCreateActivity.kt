@@ -20,6 +20,7 @@ import tech.nimbbl.exmaple.databinding.ActivityOrderCreateBinding
 import tech.nimbbl.exmaple.ui.adapter.PaymentCustomisationSpinAdapter
 import tech.nimbbl.exmaple.ui.adapter.SubPaymentCustomisationSpinAdapter
 import tech.nimbbl.exmaple.ui.adapter.headerCustomisationSpinAdapter
+import tech.nimbbl.exmaple.utils.AppConstants.EXPERIENCE_WEBVIEW
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.APP_PREFERENCE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
@@ -90,11 +91,7 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
 
     private fun initialisation() {
         val preferences: SharedPreferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
-        val appMode = preferences.getString(SAMPLE_APP_MODE, "").toString()
-        if (appMode.isEmpty()) {
-            val intent = Intent(this, NimbblConfigActivity::class.java)
-            resultLauncher.launch(intent)
-        } else {
+        // Do not open config on first launch; proceed with default UI setup
 
             // we pass our item list and context to our Adapter.
             // we pass our item list and context to our Adapter.
@@ -215,7 +212,7 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
                 }
             }
 
-        }
+        
         binding.tvSettings.setOnClickListener {
             val intent = Intent(this, NimbblConfigActivity::class.java)
             resultLauncher.launch(intent)
@@ -416,7 +413,7 @@ class OrderCreateActivity : AppCompatActivity(),NimbblCheckoutPaymentListener {
 
         // Add null check for SharedPreferences
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
-        val appMode = preferences?.getString(SAMPLE_APP_MODE, "") ?: ""
+        val appMode = preferences?.getString(SAMPLE_APP_MODE, EXPERIENCE_WEBVIEW) ?: EXPERIENCE_WEBVIEW
         if (appMode.equals(getString(R.string.value_webview))) {
             val options =
                 builder.setOrderToken(orderToken)
