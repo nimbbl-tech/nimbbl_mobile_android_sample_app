@@ -11,7 +11,7 @@ android {
         applicationId = "tech.nimbbl.exmaple"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
+        versionCode = 9
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -58,7 +58,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // WebView SDK from Maven Central
-    implementation("tech.nimbbl:webview-sdk:4.0.12")
+    implementation("tech.nimbbl:webview-sdk:4.0.13")
     
     // Local SDK (uncomment for development):
     // implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))

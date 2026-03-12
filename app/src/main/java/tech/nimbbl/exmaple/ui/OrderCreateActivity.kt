@@ -277,10 +277,13 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
     private fun resolveShopBaseUrl(): String {
         val preferences: SharedPreferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val configuredBaseUrl = preferences.getString(SHOP_BASE_URL, "").orEmpty().trim()
-        val shouldUseDefaultQa1 = configuredBaseUrl.isEmpty() || isIpBasedUrl(configuredBaseUrl)
-        val finalBaseUrl = if (shouldUseDefaultQa1) ApiConstants.BASE_URL_QA1 else configuredBaseUrl
-
-        return AppUtilExtensions.formatUrl(finalBaseUrl)
+        val finalBaseUrl = when {
+            configuredBaseUrl.isEmpty() -> ApiConstants.NIMBBL_TECH_URL
+            isIpBasedUrl(configuredBaseUrl) -> ApiConstants.BASE_URL_QA1
+            else -> configuredBaseUrl
+        }
+        val formatted = AppUtilExtensions.formatUrl(finalBaseUrl)
+        return if (formatted.isNullOrEmpty()) ApiConstants.NIMBBL_TECH_URL else formatted
     }
 
     private fun isIpBasedUrl(value: String): Boolean {
