@@ -14,7 +14,4 @@ object AppConstants {
     const val EXPERIENCE_NATIVE = "Native"
     const val EXPERIENCE_WEBVIEW = "Webview"
 
-    // Intent extras
-    const val EXTRA_ORDER_ID = "orderid"
-    const val EXTRA_STATUS = "status"
 } 

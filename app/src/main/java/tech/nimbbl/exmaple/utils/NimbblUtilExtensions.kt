@@ -13,88 +13,50 @@ fun drawCircle(backgroundColor: Int, borderColor: Int): GradientDrawable {
 }
 
 fun getProductID(header: String, context: Context): String {
-    when (header) {
-        context.getString(tech.nimbbl.exmaple.R.string.brand_name_and_logo) -> {
-            return "11"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.brand_logo) -> {
-            return "12"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.brand_name) -> {
-            return "13"
-        }
+    return when (header) {
+        context.getString(tech.nimbbl.exmaple.R.string.brand_name_and_logo) -> "1"
+        context.getString(tech.nimbbl.exmaple.R.string.brand_logo) -> "2"
+        context.getString(tech.nimbbl.exmaple.R.string.brand_name) -> "3"
+        else -> ""
     }
-    return ""
 }
 
 fun getPaymentModeCode(paymentMode: String, context: Context): String {
-    when (paymentMode) {
-        context.getString(tech.nimbbl.exmaple.R.string.all_payment_modes) -> {
-            return ""
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.netbanking) -> {
-            return "Netbanking"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.wallet) -> {
-            return "Wallet"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.card) -> {
-            return "card"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.upi) -> {
-            return "UPI"
-        }
-        else -> return ""
+    return when (paymentMode) {
+        context.getString(tech.nimbbl.exmaple.R.string.all_payment_modes) -> ""
+        context.getString(tech.nimbbl.exmaple.R.string.netbanking) -> "Netbanking"
+        context.getString(tech.nimbbl.exmaple.R.string.wallet) -> "Wallet"
+        context.getString(tech.nimbbl.exmaple.R.string.card) -> "card"
+        context.getString(tech.nimbbl.exmaple.R.string.upi) -> "UPI"
+        else -> ""
     }
 }
 
 fun getBankCode(bankName: String, context: Context): String {
     return when (bankName) {
-        context.getString(tech.nimbbl.exmaple.R.string.all_banks) -> {
-            ""
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.hdfc_bank) -> {
-            "hdfc"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.sbi_bank) -> {
-            "sbi"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.kotak_bank) -> {
-            "kotak"
-        }
+        context.getString(tech.nimbbl.exmaple.R.string.all_banks) -> ""
+        context.getString(tech.nimbbl.exmaple.R.string.hdfc_bank) -> "hdfc"
+        context.getString(tech.nimbbl.exmaple.R.string.sbi_bank) -> "sbi"
+        context.getString(tech.nimbbl.exmaple.R.string.kotak_bank) -> "kotak"
         else -> ""
     }
 }
 
 fun getWalletCode(walletName: String, context: Context): String {
     return when (walletName) {
-        context.getString(tech.nimbbl.exmaple.R.string.all_wallets) -> {
-            ""
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.freecharge) -> {
-            "freecharge"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.jio_money) -> {
-            "jio_money"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.phonepe) -> {
-            "phonepe"
-        }
+        context.getString(tech.nimbbl.exmaple.R.string.all_wallets) -> ""
+        context.getString(tech.nimbbl.exmaple.R.string.freecharge) -> "freecharge"
+        context.getString(tech.nimbbl.exmaple.R.string.jio_money) -> "jio_money"
+        context.getString(tech.nimbbl.exmaple.R.string.phonepe) -> "phonepe"
         else -> ""
     }
 }
 
 fun getPaymentFlow(upiModeName: String, context: Context): String {
     return when (upiModeName) {
-        context.getString(tech.nimbbl.exmaple.R.string.collect_intent) -> {
-            "phonepe"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.collect) -> {
-            "collect"
-        }
-        context.getString(tech.nimbbl.exmaple.R.string.intent) -> {
-            "intent"
-        }
+        context.getString(tech.nimbbl.exmaple.R.string.collect_intent) -> "phonepe"
+        context.getString(tech.nimbbl.exmaple.R.string.collect) -> "collect"
+        context.getString(tech.nimbbl.exmaple.R.string.intent) -> "intent"
         else -> ""
     }
 }

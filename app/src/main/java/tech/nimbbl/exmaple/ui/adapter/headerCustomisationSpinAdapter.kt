@@ -11,7 +11,7 @@ import tech.nimbbl.exmaple.R
 import tech.nimbbl.exmaple.utils.drawCircle
 
 
-class headerCustomisationSpinAdapter(context: Context?, private val itemList: Array<String>) :
+class HeaderCustomisationSpinAdapter(context: Context?, private val itemList: Array<String>) :
     ArrayAdapter<String?>(
         context!!, 0, itemList
     ) {

@@ -194,4 +194,18 @@
     <string name="network_error">Network error occurred. Please check your connection and try again.</string>
     <string name="invalid_response_format">Invalid response format received from server.</string>
     <string name="unsupported_payment_mode">Unsupported payment mode selected.</string>
+
+    <!-- Order Success Page Strings -->
+    <string name="amount_format">%1$s %2$s</string>
+    <string name="payment_successful">Payment Successful</string>
+    <string name="payment_failed">Payment Failed</string>
+    <string name="payment_failed_message">Your payment could not be processed</string>
+    <string name="payment_cancelled">Payment Cancelled</string>
+    <string name="payment_cancelled_message">Payment was cancelled</string>
+    <string name="encrypted_response">Encrypted Response</string>
+    <string name="payment_status">Payment Status</string>
+    <string name="payment_status_message">Payment status: %1$s</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_try_again">Try Again</string>
+    <string name="btn_retry_payment">Retry Payment</string>
 </resources>
