@@ -16,3 +16,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/.idea/
+/nimbbl_mobile_android_sample_app.code-workspace
