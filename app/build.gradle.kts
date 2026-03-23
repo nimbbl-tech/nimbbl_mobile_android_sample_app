@@ -11,7 +11,7 @@ android {
         applicationId = "tech.nimbbl.exmaple"
         minSdk = 24
         targetSdk = 36
-        versionCode = 6
+        versionCode = 9
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -57,17 +57,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-
-    api(platform("com.squareup.okhttp3:okhttp-bom:4.8.1"))
-    api("com.squareup.okhttp3:okhttp")
-    api("com.squareup.okhttp3:logging-interceptor")
-
-    // WebView SDK dependency (includes Core API SDK transitively)
-    //implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
+    // WebView SDK from Maven Central
+    implementation("tech.nimbbl:webview-sdk:4.0.13")
     
-    // SDK integrations - Production version
-    implementation("com.github.nimbbl-tech:nimbbl_mobile_kit_android_webview_sdk:v4.0.7")
+    // Local SDK (uncomment for development):
+    // implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
 }
-

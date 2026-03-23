@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
-import org.json.JSONException
 import org.json.JSONObject
 import tech.nimbbl.exmaple.R
 
@@ -21,6 +20,27 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
 
     // Parsed data from complex JSON
     private var parsedPaymentData: MutableMap<String, Any> = mutableMapOf()
+
+    // Constants
+    companion object {
+        private const val ENCRYPTED_RESPONSE_MESSAGE = "Encrypted response received. Please handle decryption on your server."
+    }
+
+    // Data class for detailed status information
+    private data class DetailedStatusInfo(
+        val reason: String = "",
+        val cancellationReason: String = "",
+        val attempts: String = "",
+        val referrerPlatform: String = "",
+        val referrerPlatformVersion: String = "",
+        val deviceName: String = "",
+        val deviceOsName: String = "",
+        val deviceIpAddress: String = "",
+        val shippingCity: String = "",
+        val shippingState: String = "",
+        val shippingCountry: String = "",
+        val shippingPincode: String = ""
+    )
 
     // UI Elements
     private lateinit var statusIcon: ImageView
@@ -135,26 +155,9 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     }
 
     private fun handlePrimaryAction() {
-        // Handle primary action based on payment status
-        val status = parsedPaymentData["status"]?.toString()?.lowercase()
-        when (status) {
-            "failed" -> {
-                // Go back to payment screen to try again
-                finish()
-            }
-            "success" -> {
-                // Continue or go back to home
-                finish()
-            }
-            "cancelled" -> {
-                // Retry payment
-                finish()
-            }
-            else -> {
-                // Default action
-                finish()
-            }
-        }
+        // All actions currently lead to finishing the activity
+        // Future enhancements can add specific handling per status if needed
+        finish()
     }
 
     private fun handleSecondaryAction() {
@@ -182,7 +185,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
                 result["is_encrypted"] = true
                 result["encrypted_response"] = safeGetString(paymentData, "encrypted_response", "")
                 result["status"] = "encrypted"
-                result["message"] = "Encrypted response received. Please handle decryption on your server."
+                result["message"] = ENCRYPTED_RESPONSE_MESSAGE
                 return result
             }
 
@@ -283,7 +286,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
     }
 
-    private fun safeGetDouble(jsonObject: JSONObject, key: String, defaultValue: Double = 0.0): Double {
+    private fun safeGetDouble(jsonObject: JSONObject, key: String, defaultValue: Double): Double {
         return try {
             jsonObject.optDouble(key, defaultValue)
         } catch (e: Exception) {
@@ -292,7 +295,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
     }
 
-    private fun safeGetInt(jsonObject: JSONObject, key: String, defaultValue: Int = 0): Int {
+    private fun safeGetInt(jsonObject: JSONObject, key: String, defaultValue: Int): Int {
         return try {
             jsonObject.optInt(key, defaultValue)
         } catch (e: Exception) {
@@ -301,7 +304,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
     }
 
-    private fun safeGetBoolean(jsonObject: JSONObject, key: String, defaultValue: Boolean = false): Boolean {
+    private fun safeGetBoolean(jsonObject: JSONObject, key: String, defaultValue: Boolean): Boolean {
         return try {
             jsonObject.optBoolean(key, defaultValue)
         } catch (e: Exception) {
@@ -312,32 +315,18 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
 
     private fun safeGetJSONObject(jsonObject: JSONObject, key: String): JSONObject? {
         return try {
-            jsonObject.optJSONObject(key)
+            // Check if key exists and is not null
+            if (jsonObject.has(key) && !jsonObject.isNull(key)) {
+                jsonObject.optJSONObject(key)
+            } else {
+                null
+            }
         } catch (e: Exception) {
             Log.w("OrderSuccess", "Error getting JSONObject for key '$key': ${e.message}")
             null
         }
     }
 
-
-    /**
-     * Simple JSON parsing fallback
-     */
-    private fun parseSimpleJson(jsonString: String): MutableMap<String, Any> {
-        val result: MutableMap<String, Any> = mutableMapOf()
-        try {
-            val jsonObject = JSONObject(jsonString)
-            val keys = jsonObject.keys()
-            while (keys.hasNext()) {
-                val key = keys.next()
-                val value = jsonObject[key]
-                result[key] = value ?: ""
-            }
-        } catch (e: JSONException) {
-            Log.e("OrderSuccess", "parseSimpleJson: JSON parsing error: ${e.message}")
-        }
-        return result
-    }
 
     /**
      * Display order information with enhanced details from parsed JSON
@@ -356,17 +345,14 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         val message = parsedPaymentData["message"]?.toString() ?: ""
         val reason = parsedPaymentData["reason"]?.toString() ?: ""
         val totalAmount = parsedPaymentData["total_amount"]?.toString() ?: ""
-        val grandTotal = parsedPaymentData["grand_total"]?.toString() ?: ""
         val currency = parsedPaymentData["currency"]?.toString() ?: "INR"
         val invoiceId = parsedPaymentData["invoice_id"]?.toString() ?: ""
         val transactionId = parsedPaymentData["transaction_id"]?.toString() ?: parsedPaymentData["nimbbl_transaction_id"]?.toString() ?: ""
-        val subMerchantId = parsedPaymentData["sub_merchant_id"]?.toString() ?: ""
         val orderDate = parsedPaymentData["order_date"]?.toString() ?: ""
         val cancellationReason = parsedPaymentData["cancellation_reason"]?.toString() ?: ""
         val attempts = parsedPaymentData["attempts"]?.toString() ?: ""
         val referrerPlatform = parsedPaymentData["referrer_platform"]?.toString() ?: ""
         val referrerPlatformVersion = parsedPaymentData["referrer_platform_version"]?.toString() ?: ""
-        val deviceUserAgent = parsedPaymentData["device_user_agent"]?.toString() ?: ""
         val deviceIpAddress = parsedPaymentData["device_ip_address"]?.toString() ?: ""
         val deviceName = parsedPaymentData["device_name"]?.toString() ?: ""
         val deviceOsName = parsedPaymentData["device_os_name"]?.toString() ?: ""
@@ -389,7 +375,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         // Show/hide amount field based on data availability
         val amountLayout = findViewById<LinearLayout>(R.id.amount_layout)
         if (totalAmount.isNotEmpty()) {
-            txtAmount.text = "$currency $totalAmount"
+            txtAmount.text = getString(R.string.amount_format, currency, totalAmount)
             amountLayout.visibility = View.VISIBLE
         } else {
             amountLayout.visibility = View.GONE
@@ -424,9 +410,22 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
 
         // Update detailed status information
-        updateDetailedStatus(reason, cancellationReason, attempts, referrerPlatform,
-            referrerPlatformVersion, deviceName, deviceOsName, deviceIpAddress,
-            shippingCity, shippingState, shippingCountry, shippingPincode)
+        updateDetailedStatus(
+            DetailedStatusInfo(
+                reason = reason,
+                cancellationReason = cancellationReason,
+                attempts = attempts,
+                referrerPlatform = referrerPlatform,
+                referrerPlatformVersion = referrerPlatformVersion,
+                deviceName = deviceName,
+                deviceOsName = deviceOsName,
+                deviceIpAddress = deviceIpAddress,
+                shippingCity = shippingCity,
+                shippingState = shippingState,
+                shippingCountry = shippingCountry,
+                shippingPincode = shippingPincode
+            )
+        )
 
         // Update action buttons based on status
         updateActionButtons(displayStatus)
@@ -467,29 +466,29 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         val statusLower = status.lowercase()
         when (statusLower) {
             "success", "completed" -> {
-                statusTitle.text = "Payment Successful"
+                statusTitle.text = getString(R.string.payment_successful)
                 statusTitle.setTextColor(getColor(R.color.success_green))
-                statusMessage.text = message.ifEmpty { "Your payment has been processed successfully" }
+                statusMessage.text = message.ifEmpty { getString(R.string.payment_success_message) }
             }
             "failed", "error" -> {
-                statusTitle.text = "Payment Failed"
+                statusTitle.text = getString(R.string.payment_failed)
                 statusTitle.setTextColor(getColor(R.color.red))
-                statusMessage.text = message.ifEmpty { "Your payment could not be processed" }
+                statusMessage.text = message.ifEmpty { getString(R.string.payment_failed_message) }
             }
             "cancelled" -> {
-                statusTitle.text = "Payment Cancelled"
+                statusTitle.text = getString(R.string.payment_cancelled)
                 statusTitle.setTextColor(getColor(R.color.light_grey))
-                statusMessage.text = message.ifEmpty { "Payment was cancelled" }
+                statusMessage.text = message.ifEmpty { getString(R.string.payment_cancelled_message) }
             }
             "encrypted" -> {
-                statusTitle.text = "Encrypted Response"
+                statusTitle.text = getString(R.string.encrypted_response)
                 statusTitle.setTextColor(getColor(R.color.warning_orange))
-                statusMessage.text = message.ifEmpty { "Encrypted response received. Please handle decryption on your server." }
+                statusMessage.text = message.ifEmpty { ENCRYPTED_RESPONSE_MESSAGE }
             }
             else -> {
-                statusTitle.text = "Payment Status"
+                statusTitle.text = getString(R.string.payment_status)
                 statusTitle.setTextColor(getColor(R.color.black))
-                statusMessage.text = message.ifEmpty { "Payment status: $status" }
+                statusMessage.text = message.ifEmpty { getString(R.string.payment_status_message, status) }
             }
         }
     }
@@ -515,32 +514,28 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
     }
 
-    private fun updateDetailedStatus(reason: String, cancellationReason: String, attempts: String,
-                                     referrerPlatform: String, referrerPlatformVersion: String,
-                                     deviceName: String, deviceOsName: String, deviceIpAddress: String,
-                                     shippingCity: String, shippingState: String, shippingCountry: String,
-                                     shippingPincode: String) {
+    private fun updateDetailedStatus(info: DetailedStatusInfo) {
         val detailedInfo = buildString {
-            if (reason.isNotEmpty()) {
-                append("Reason: $reason\n\n")
+            if (info.reason.isNotEmpty()) {
+                append("Reason: ${info.reason}\n\n")
             }
-            if (cancellationReason.isNotEmpty()) {
-                append("Cancellation Reason: $cancellationReason\n\n")
+            if (info.cancellationReason.isNotEmpty()) {
+                append("Cancellation Reason: ${info.cancellationReason}\n\n")
             }
-            if (attempts.isNotEmpty()) {
-                append("Attempts: $attempts\n\n")
+            if (info.attempts.isNotEmpty()) {
+                append("Attempts: ${info.attempts}\n\n")
             }
-            if (referrerPlatform.isNotEmpty()) {
-                append("Platform: $referrerPlatform $referrerPlatformVersion\n\n")
+            if (info.referrerPlatform.isNotEmpty()) {
+                append("Platform: ${info.referrerPlatform} ${info.referrerPlatformVersion}\n\n")
             }
-            if (deviceName.isNotEmpty()) {
-                append("Device: $deviceName ($deviceOsName)\n\n")
+            if (info.deviceName.isNotEmpty()) {
+                append("Device: ${info.deviceName} (${info.deviceOsName})\n\n")
             }
-            if (deviceIpAddress.isNotEmpty()) {
-                append("IP Address: $deviceIpAddress\n\n")
+            if (info.deviceIpAddress.isNotEmpty()) {
+                append("IP Address: ${info.deviceIpAddress}\n\n")
             }
-            if (shippingCity.isNotEmpty()) {
-                append("Shipping Address: $shippingCity, $shippingState, $shippingCountry - $shippingPincode")
+            if (info.shippingCity.isNotEmpty()) {
+                append("Shipping Address: ${info.shippingCity}, ${info.shippingState}, ${info.shippingCountry} - ${info.shippingPincode}")
             }
         }
 
@@ -562,7 +557,7 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         updateStatusUI("encrypted")
 
         // Update status title and message
-        updateStatusTitleAndMessage("encrypted", "Encrypted response received. Please handle decryption on your server.")
+        updateStatusTitleAndMessage("encrypted", ENCRYPTED_RESPONSE_MESSAGE)
 
         // Hide order details since we can't parse them
         val orderDetailsCard = findViewById<com.google.android.material.card.MaterialCardView>(R.id.order_details_card)
@@ -586,23 +581,23 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
 
         when (statusLower) {
             "success", "completed" -> {
-                btnPrimaryAction.text = "Continue"
+                btnPrimaryAction.text = getString(R.string.btn_continue)
                 btnPrimaryAction.setBackgroundColor(getColor(R.color.success_green))
             }
             "failed", "error" -> {
-                btnPrimaryAction.text = "Try Again"
+                btnPrimaryAction.text = getString(R.string.btn_try_again)
                 btnPrimaryAction.setBackgroundColor(getColor(R.color.red))
             }
             "cancelled" -> {
-                btnPrimaryAction.text = "Retry Payment"
+                btnPrimaryAction.text = getString(R.string.btn_retry_payment)
                 btnPrimaryAction.setBackgroundColor(getColor(R.color.light_grey))
             }
             "encrypted" -> {
-                btnPrimaryAction.text = "Continue"
+                btnPrimaryAction.text = getString(R.string.btn_continue)
                 btnPrimaryAction.setBackgroundColor(getColor(R.color.warning_orange))
             }
             else -> {
-                btnPrimaryAction.text = "Continue"
+                btnPrimaryAction.text = getString(R.string.btn_continue)
                 btnPrimaryAction.setBackgroundColor(getColor(R.color.colorAccent))
             }
         }
@@ -612,8 +607,8 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         return if (orderDate.isNotEmpty()) {
             try {
                 // Simple date formatting - you can enhance this with proper date parsing
-                orderDate.substring(0, 19) // Show only date and time part
-            } catch (e: Exception) {
+                orderDate.take(19) // Show only date and time part
+            } catch (_: Exception) {
                 orderDate
             }
         } else {

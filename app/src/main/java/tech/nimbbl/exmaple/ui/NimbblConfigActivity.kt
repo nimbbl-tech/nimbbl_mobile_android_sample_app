@@ -28,10 +28,7 @@ import tech.nimbbl.exmaple.utils.AppPreferenceKeys.QA_ENVIRONMENT_URL
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
 import tech.nimbbl.exmaple.utils.AppUtilExtensions
-import tech.nimbbl.exmaple.utils.Constants.Companion.BASE_URL_PRE_PROD
-import tech.nimbbl.exmaple.utils.Constants.Companion.BASE_URL_PROD
-import tech.nimbbl.exmaple.utils.Constants.Companion.DEFAULT_ENVIRONMENT
-import tech.nimbbl.exmaple.utils.Constants.Companion.DEFAULT_QA_URL
+import tech.nimbbl.exmaple.utils.ApiConstants
 import tech.nimbbl.exmaple.utils.UiUtils.showToast
 import tech.nimbbl.webviewsdk.core.NimbblCheckoutSDK
 
@@ -42,7 +39,7 @@ class NimbblConfigActivity : AppCompatActivity() {
     private val experiences = arrayOf(EXPERIENCE_NATIVE, EXPERIENCE_WEBVIEW)
     private var selectedEnvironment: String = ENVIRONMENT_PROD
     private var selectedExperience: String = EXPERIENCE_WEBVIEW
-    private var qaUrl: String = DEFAULT_QA_URL
+    private var qaUrl: String = ApiConstants.BASE_URL_QA1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +50,10 @@ class NimbblConfigActivity : AppCompatActivity() {
         
         // Set status bar color to black using modern approach (after setContentView)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            window.insetsController?.let { controller ->
-                controller.setSystemBarsAppearance(
-                    android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                    android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                )
-            }
+            window.insetsController?.setSystemBarsAppearance(
+                android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
         } else {
             @Suppress("DEPRECATION")
             window.statusBarColor = getColor(R.color.black)
@@ -90,16 +85,16 @@ class NimbblConfigActivity : AppCompatActivity() {
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         
         // Load environment
-        val savedBaseUrl = preferences.getString(SHOP_BASE_URL, DEFAULT_ENVIRONMENT)
+        val savedBaseUrl = preferences.getString(SHOP_BASE_URL, ApiConstants.NIMBBL_TECH_URL)
         selectedEnvironment = when (savedBaseUrl) {
-            BASE_URL_PROD -> ENVIRONMENT_PROD
-            BASE_URL_PRE_PROD -> ENVIRONMENT_PRE_PROD
+            ApiConstants.NIMBBL_TECH_URL -> ENVIRONMENT_PROD
+            ApiConstants.BASE_URL_PRE_PROD -> ENVIRONMENT_PRE_PROD
             else -> ENVIRONMENT_QA
         }
         
         // Load QA URL if it's a QA environment
         if (selectedEnvironment == ENVIRONMENT_QA) {
-            qaUrl = preferences.getString(QA_ENVIRONMENT_URL, DEFAULT_QA_URL) ?: DEFAULT_QA_URL
+            qaUrl = preferences.getString(QA_ENVIRONMENT_URL, ApiConstants.BASE_URL_QA1) ?: ApiConstants.BASE_URL_QA1
         }
         
         // Load experience
@@ -115,14 +110,18 @@ class NimbblConfigActivity : AppCompatActivity() {
         // Setup QA URL field
         binding.etQaUrl.setText(qaUrl)
         binding.etQaUrl.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not needed - only afterTextChanged is used
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Not needed - only afterTextChanged is used
+            }
             override fun afterTextChanged(s: Editable?) {
                 val newUrl = s?.toString() ?: ""
                 if (newUrl.isNotEmpty()) {
                     qaUrl = newUrl
                 } else {
-                    qaUrl = DEFAULT_QA_URL
+                    qaUrl = ApiConstants.BASE_URL_QA1
                     binding.etQaUrl.setText(qaUrl)
                 }
             }
@@ -169,7 +168,7 @@ class NimbblConfigActivity : AppCompatActivity() {
             // Save QA URL if switching to QA
             if (selectedEnvironment == ENVIRONMENT_QA) {
                 if (qaUrl.isEmpty()) {
-                    qaUrl = DEFAULT_QA_URL
+                    qaUrl = ApiConstants.BASE_URL_QA1
                 }
                 binding.etQaUrl.setText(qaUrl)
             }
@@ -213,10 +212,10 @@ class NimbblConfigActivity : AppCompatActivity() {
         
         // Determine the base URL based on environment
         val baseUrl = when (selectedEnvironment) {
-            ENVIRONMENT_PROD -> BASE_URL_PROD
-            ENVIRONMENT_PRE_PROD -> BASE_URL_PRE_PROD
+            ENVIRONMENT_PROD -> ApiConstants.NIMBBL_TECH_URL
+            ENVIRONMENT_PRE_PROD -> ApiConstants.BASE_URL_PRE_PROD
             ENVIRONMENT_QA -> AppUtilExtensions.formatUrl(qaUrl)
-            else -> BASE_URL_PROD
+            else -> ApiConstants.NIMBBL_TECH_URL
         }
         
         // Save preferences
