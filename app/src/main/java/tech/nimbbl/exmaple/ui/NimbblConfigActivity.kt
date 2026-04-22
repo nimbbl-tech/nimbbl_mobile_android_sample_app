@@ -155,10 +155,10 @@ class NimbblConfigActivity : AppCompatActivity() {
 
         binding.swSdkDebugLogs.isChecked = sdkDebugLoggingEnabled
         // Apply immediately so it works even without tapping "Done"
-        NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
+        //NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
         binding.swSdkDebugLogs.setOnCheckedChangeListener { _, isChecked ->
             sdkDebugLoggingEnabled = isChecked
-            NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(isChecked)
+            //NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(isChecked)
         }
 
         binding.llDebugLogs.setOnClickListener {
@@ -290,7 +290,7 @@ class NimbblConfigActivity : AppCompatActivity() {
         
         // Update SDK environment
         NimbblCheckoutSDK.getInstance().setEnvironmentUrl(baseUrl)
-        NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(binding.swSdkDebugLogs.isChecked)
+        //NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(binding.swSdkDebugLogs.isChecked)
         
         val isSuccess = editor.commit()
         

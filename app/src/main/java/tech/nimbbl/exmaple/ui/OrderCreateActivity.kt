@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import tech.nimbbl.exmaple.BuildConfig
 import tech.nimbbl.exmaple.R
 import tech.nimbbl.exmaple.databinding.ActivityOrderCreateBinding
 import tech.nimbbl.exmaple.ui.adapter.PaymentCustomisationSpinAdapter
@@ -36,7 +37,6 @@ import tech.nimbbl.exmaple.utils.getPaymentFlow
 import tech.nimbbl.exmaple.utils.getPaymentModeCode
 import tech.nimbbl.exmaple.utils.getProductID
 import tech.nimbbl.exmaple.utils.getWalletCode
-import tech.nimbbl.webviewsdk.BuildConfig
 import tech.nimbbl.webviewsdk.core.NimbblCheckoutSDK
 import tech.nimbbl.webviewsdk.models.NimbblCheckoutOptions
 import tech.nimbbl.webviewsdk.models.interfaces.NimbblCheckoutPaymentListener
@@ -208,7 +208,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                     } else {
                         formattedShopBaseUrl
                     }
-                    NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
+                    //NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
                     NimbblCheckoutSDK.getInstance().setEnvironmentUrl(sdkEnvUrl)
 
                     // Do NOT use access token for checkout. It's only for authenticating create-order API calls.
