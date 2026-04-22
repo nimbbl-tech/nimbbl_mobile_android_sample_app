@@ -15,6 +15,11 @@
     <string name="select_environment">Select Environment</string>
     <string name="select_experience">Select Experience</string>
     <string name="qa_url_hint">Enter QA environment URL</string>
+    <string name="access_token_label">Access Token</string>
+    <string name="access_token_hint">Enter access token (optional)</string>
+    <string name="sdk_debug_logs_label">Enable SDK logging</string>
+    <string name="debug_logs_label">Debug logs</string>
+    <string name="debug_logs_desc">Open live log screen</string>
     <string name="settings_saved_success">Settings saved successfully!</string>
     <string name="cancel">Cancel</string>
 

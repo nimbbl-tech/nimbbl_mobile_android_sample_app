@@ -3,7 +3,7 @@
     <style name="Base.Theme.NimbblAndroidSampleApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/black</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
@@ -20,13 +20,13 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
     <style name="SpinnerThemeCurrency">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:fontFamily">@font/gorditabold</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="SpinnerThemePayment">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:fontFamily">@font/gorditamedium</item>
         <item name="android:textSize">10sp</item>
     </style>

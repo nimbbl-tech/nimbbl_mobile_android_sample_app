@@ -26,6 +26,10 @@ import tech.nimbbl.exmaple.utils.AppConstants.EXPERIENCE_WEBVIEW
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.APP_PREFERENCE
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.QA_ENVIRONMENT_URL
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SAMPLE_APP_MODE
+import tech.nimbbl.exmaple.utils.AppPreferenceKeys.ACCESS_TOKEN
+import tech.nimbbl.exmaple.utils.AppPreferenceKeys.DEBUG_LOGS_ENABLED
+import tech.nimbbl.exmaple.utils.AppPreferenceKeys.DEBUG_MENU_UNLOCKED
+import tech.nimbbl.exmaple.utils.AppPreferenceKeys.ORDER_TOKEN
 import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
 import tech.nimbbl.exmaple.utils.AppUtilExtensions
 import tech.nimbbl.exmaple.utils.ApiConstants
@@ -40,6 +44,11 @@ class NimbblConfigActivity : AppCompatActivity() {
     private var selectedEnvironment: String = ENVIRONMENT_PROD
     private var selectedExperience: String = EXPERIENCE_WEBVIEW
     private var qaUrl: String = ApiConstants.BASE_URL_QA1
+    private var accessToken: String = ""
+    private var debugMenuUnlocked: Boolean = false
+    private var sdkDebugLoggingEnabled: Boolean = false
+    private var debugTapCount: Int = 0
+    private var lastDebugTapMs: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,17 +56,6 @@ class NimbblConfigActivity : AppCompatActivity() {
         binding = ActivityNimbblConfigBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        
-        // Set status bar color to black using modern approach (after setContentView)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            window.insetsController?.setSystemBarsAppearance(
-                android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            window.statusBarColor = getColor(R.color.black)
-        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -100,6 +98,13 @@ class NimbblConfigActivity : AppCompatActivity() {
         // Load experience
         val savedExperience = preferences.getString(SAMPLE_APP_MODE, EXPERIENCE_WEBVIEW)
         selectedExperience = if (savedExperience == EXPERIENCE_NATIVE) EXPERIENCE_NATIVE else EXPERIENCE_WEBVIEW
+
+        // Load optional access token (fallback to older "order_token" key)
+        accessToken = preferences.getString(ACCESS_TOKEN, "").orEmpty()
+            .ifEmpty { preferences.getString(ORDER_TOKEN, "").orEmpty() }
+
+        debugMenuUnlocked = preferences.getBoolean(DEBUG_MENU_UNLOCKED, false)
+        sdkDebugLoggingEnabled = preferences.getBoolean(DEBUG_LOGS_ENABLED, false)
     }
 
     private fun setupUI() {
@@ -129,12 +134,65 @@ class NimbblConfigActivity : AppCompatActivity() {
         
         // Show/hide QA URL field based on environment
         updateQaUrlVisibility()
+
+        binding.llDebugSection.visibility = if (debugMenuUnlocked) View.VISIBLE else View.GONE
+
+        // Setup optional token field
+        binding.etAccessToken.setText(accessToken)
+        binding.tvClearAccessToken.setOnClickListener {
+            binding.etAccessToken.setText("")
+        }
+        binding.tvClearAccessToken.visibility =
+            if (accessToken.isBlank()) View.GONE else View.VISIBLE
+        binding.etAccessToken.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                binding.tvClearAccessToken.visibility =
+                    if (s.isNullOrBlank()) View.GONE else View.VISIBLE
+            }
+        })
+
+        binding.swSdkDebugLogs.isChecked = sdkDebugLoggingEnabled
+        // Apply immediately so it works even without tapping "Done"
+        NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
+        binding.swSdkDebugLogs.setOnCheckedChangeListener { _, isChecked ->
+            sdkDebugLoggingEnabled = isChecked
+            NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(isChecked)
+        }
+
+        binding.llDebugLogs.setOnClickListener {
+            startActivity(
+                android.content.Intent(this, DebugLogsActivity::class.java)
+                    .putExtra(DebugLogsActivity.EXTRA_START_PAUSED, true)
+            )
+        }
     }
 
     private fun setupClickListeners() {
         // Back button
         binding.btnBack.setOnClickListener {
             finish()
+        }
+
+        // Unlock debug section: tap app bar 7 times
+        val unlockClickTarget = binding.headerView
+        unlockClickTarget.setOnClickListener {
+            val now = System.currentTimeMillis()
+            if (now - lastDebugTapMs > 2000) {
+                debugTapCount = 0
+            }
+            lastDebugTapMs = now
+            debugTapCount += 1
+            if (debugTapCount >= 7 && !debugMenuUnlocked) {
+                debugMenuUnlocked = true
+                binding.llDebugSection.visibility = View.VISIBLE
+                getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(DEBUG_MENU_UNLOCKED, true)
+                    .apply()
+                showToast(this, "Debug options unlocked")
+            }
         }
         
         // Environment button
@@ -221,6 +279,10 @@ class NimbblConfigActivity : AppCompatActivity() {
         // Save preferences
         editor.putString(SHOP_BASE_URL, baseUrl)
         editor.putString(QA_ENVIRONMENT_URL, qaUrl)
+        if (debugMenuUnlocked) {
+            editor.putString(ACCESS_TOKEN, binding.etAccessToken.text?.toString().orEmpty().trim())
+            editor.putBoolean(DEBUG_LOGS_ENABLED, binding.swSdkDebugLogs.isChecked)
+        }
         editor.putString(SAMPLE_APP_MODE, 
             if (selectedExperience == EXPERIENCE_NATIVE) EXPERIENCE_NATIVE 
             else EXPERIENCE_WEBVIEW
@@ -228,6 +290,7 @@ class NimbblConfigActivity : AppCompatActivity() {
         
         // Update SDK environment
         NimbblCheckoutSDK.getInstance().setEnvironmentUrl(baseUrl)
+        NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(binding.swSdkDebugLogs.isChecked)
         
         val isSuccess = editor.commit()
         

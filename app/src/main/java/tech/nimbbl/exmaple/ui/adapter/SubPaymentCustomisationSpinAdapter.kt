@@ -42,33 +42,43 @@ class SubPaymentCustomisationSpinAdapter(context: Context?, private val itemList
         if (textViewName != null) {
             textViewName.text = currentItem
             if (ivCircle != null) {
-                ivCircle.background = ResourcesCompat.getDrawable(context.resources, R.drawable.upi, context.theme)
+                // Sub-payment icons include colored bank/wallet logos; tint only monochrome icons
+                // (e.g. grid/upi) so they stay visible in dark mode.
+                ivCircle.background = null
+                var resId = R.drawable.upi
                 when (currentItem) {
 
                     context.resources.getStringArray(R.array.sub_payment_type_netbanking)[0] -> {
-                        ivCircle.background = ResourcesCompat.getDrawable(context.resources, R.drawable.grid, context.theme)
+                        resId = R.drawable.grid
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_netbanking)[1] -> {
-                        ivCircle.background =  ResourcesCompat.getDrawable(context.resources, R.drawable.hdfc, context.theme)
+                        resId = R.drawable.hdfc
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_netbanking)[2] -> {
-                        ivCircle.background =  ResourcesCompat.getDrawable(context.resources, R.drawable.sbi, context.theme)
+                        resId = R.drawable.sbi
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_netbanking)[3] -> {
-                        ivCircle.background =  ResourcesCompat.getDrawable(context.resources, R.drawable.kotak, context.theme)
+                        resId = R.drawable.kotak
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_wallet)[0] -> {
-                        ivCircle.background = ResourcesCompat.getDrawable(context.resources, R.drawable.grid, context.theme)
+                        resId = R.drawable.grid
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_wallet)[1] -> {
-                        ivCircle.background = ResourcesCompat.getDrawable(context.resources, R.drawable.freecharge, context.theme)
+                        resId = R.drawable.freecharge
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_wallet)[2] -> {
-                        ivCircle.background = ResourcesCompat.getDrawable(context.resources, R.drawable.jiomoney, context.theme)
+                        resId = R.drawable.jiomoney
                     }
                     context.resources.getStringArray(R.array.sub_payment_type_wallet)[3] -> {
-                        ivCircle.background = ResourcesCompat.getDrawable(context.resources, R.drawable.phonepe, context.theme)
+                        resId = R.drawable.phonepe
                     }
+                }
+
+                ivCircle.setImageDrawable(ResourcesCompat.getDrawable(context.resources, resId, context.theme))
+                if (resId == R.drawable.grid || resId == R.drawable.upi) {
+                    ivCircle.setColorFilter(textViewName.currentTextColor)
+                } else {
+                    ivCircle.clearColorFilter()
                 }
             }
         }

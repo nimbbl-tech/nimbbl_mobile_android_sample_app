@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/black" android:state_checked="true" />
-    <item android:color="@color/light_grey" />
+    <!-- Track: monochrome in both themes (avoid outline tint colors). -->
+    <item
+        android:alpha="0.45"
+        android:color="?attr/colorOnSurface"
+        android:state_checked="true" />
+    <item
+        android:alpha="0.25"
+        android:color="?attr/colorOnSurface" />
 </selector> 

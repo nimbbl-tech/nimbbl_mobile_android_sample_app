@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/black" android:state_checked="true" />
-    <item android:color="@color/black" android:state_activated="true" />
-    <item android:color="@color/black" />
+    <!-- Monochrome checkbox tint: black (light) / white (dark) -->
+    <item android:color="?attr/colorOnSurface" android:state_checked="true" />
+    <item android:color="?attr/colorOnSurface" android:state_activated="true" />
+    <item android:alpha="0.55" android:color="?attr/colorOnSurface" />
 </selector> 

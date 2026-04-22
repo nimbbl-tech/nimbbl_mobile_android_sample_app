@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="?attr/colorSurface"
     android:fitsSystemWindows="true">
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:text="@string/select_environment"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/default_prod"
-                    android:textColor="@android:color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="16sp" />
 
                 <ImageView
@@ -87,16 +87,12 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@android:drawable/arrow_down_float" />
+                    android:src="@android:drawable/arrow_down_float"
+                    android:tint="?android:attr/textColorSecondary" />
 
             </LinearLayout>
 
-            <View
-                android:id="@+id/vw_environment_underline"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="2dp"
-                android:background="#4D808080" />
+            <!-- Removed underline divider (not needed in new UI) -->
 
             <!-- QA URL Input Field -->
             <EditText
@@ -108,6 +104,8 @@
                 android:hint="@string/qa_url_hint"
                 android:inputType="textUri"
                 android:paddingHorizontal="12dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
                 android:textSize="16sp"
                 android:visibility="gone" />
 
@@ -118,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="@string/select_experience"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -140,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/default_native"
-                    android:textColor="@android:color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="16sp" />
 
                 <ImageView
@@ -148,28 +146,143 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@android:drawable/arrow_down_float" />
+                    android:src="@android:drawable/arrow_down_float"
+                    android:tint="?android:attr/textColorSecondary" />
 
             </LinearLayout>
 
-            <View
-                android:id="@+id/vw_experience_underline"
+            <!-- Removed underline divider (not needed in new UI) -->
+
+            <!-- Hidden debug section (unlock by tapping app bar 7 times) -->
+            <LinearLayout
+                android:id="@+id/ll_debug_section"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="2dp"
-                android:background="#4D808080" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Optional Access Token -->
+                <TextView
+                    android:id="@+id/tv_access_token_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/access_token_label"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/ll_access_token"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_access_token"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_text_background"
+                        android:hint="@string/access_token_hint"
+                        android:inputType="textNoSuggestions"
+                        android:paddingHorizontal="12dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_clear_access_token"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="6dp"
+                        android:text="Clear"
+                    android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- SDK debug logging (works in signed builds too) -->
+                <LinearLayout
+                    android:id="@+id/ll_sdk_debug_logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_sdk_debug_logs_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sdk_debug_logs_label"
+                    android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_sdk_debug_logs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:thumbTint="@color/switch_thumb_color"
+                        app:trackTint="@color/switch_track_color" />
+                </LinearLayout>
+
+                <!-- Debug logs -->
+                <TextView
+                    android:id="@+id/tv_debug_logs_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/debug_logs_label"
+                android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/ll_debug_logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_debug_logs_desc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/debug_logs_desc"
+                    android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_debug_logs_chevron"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="2dp"
+                        android:src="@drawable/ic_chevron_right"
+                    android:tint="?android:attr/textColorSecondary" />
+                </LinearLayout>
+            </LinearLayout>
 
             <!-- Done Button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_done"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/done_button_background"
+                android:fontFamily="@font/gorditabold"
                 android:text="@string/lbl_done"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:backgroundTint="@color/black" />
         </LinearLayout>
 
     </LinearLayout>

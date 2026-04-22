@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".NimbblSampleApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,7 +29,11 @@
         <activity
             android:name=".ui.NimbblConfigActivity"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.NimbblAndroidSampleApp" />
+        <activity
+            android:name=".ui.DebugLogsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NimbblAndroidSampleApp" />
         <activity
             android:name=".ui.OrderSucessPageAcitivty"
             android:exported="false"

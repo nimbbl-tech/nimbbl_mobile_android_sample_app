@@ -23,7 +23,7 @@
         android:layout_toEndOf="@+id/image_view"
         android:text="@string/card_placeholder"
         android:fontFamily="@font/gorditamedium"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="12sp" />
 
 </RelativeLayout>

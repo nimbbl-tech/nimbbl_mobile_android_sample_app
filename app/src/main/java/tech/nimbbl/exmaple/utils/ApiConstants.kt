@@ -21,6 +21,7 @@ object ApiConstants {
 
     // Shop Order URLs - Used by sample app for shop order creation
     const val SHOP_ORDER_URL_QA1 = "https://qa1sonicshopapi.qa.nimbbl.tech/create-shop"
+    const val SHOP_ORDER_URL_QA3 = "https://qa3sonicshopapi.qa.nimbbl.tech/create-shop"
     const val SHOP_ORDER_URL_PROD = "https://sonicshopapi.nimbbl.tech/create-shop"
     const val SHOP_ORDER_URL_PRE_PROD = "https://sonicshopapipp.nimbbl.tech/create-shop"
 }

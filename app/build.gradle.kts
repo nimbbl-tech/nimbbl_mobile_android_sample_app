@@ -58,8 +58,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // WebView SDK from Maven Central
-    implementation("tech.nimbbl:webview-sdk:4.0.13")
+    //implementation("tech.nimbbl:webview-sdk:4.0.13")
     
     // Local SDK (uncomment for development):
-    // implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
+    implementation(project(":nimbbl_mobile_kit_android_webview_sdk"))
 }
