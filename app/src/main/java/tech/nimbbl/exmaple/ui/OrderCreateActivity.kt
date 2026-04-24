@@ -176,6 +176,8 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             val intent = Intent(this, NimbblConfigActivity::class.java)
             resultLauncher.launch(intent)
         }
+
+        binding.tvCopyright.text = getString(R.string.copyright_text, java.util.Calendar.getInstance().get(java.util.Calendar.YEAR))
     }
 
     private fun setListeners() {
@@ -709,6 +711,11 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             Log.w("OrderCreate", "Unsupported payment mode: $appMode")
             showToast(this@OrderCreateActivity, resources.getString(R.string.unsupported_payment_mode))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        NimbblCheckoutSDK.getInstance().cleanup()
     }
 
     override fun onCheckoutResponse(data: MutableMap<String, Any>) {

@@ -54,7 +54,7 @@
     <string name="name_hint">name</string>
     <string name="number_hint">number</string>
     <string name="email_hint">email id</string>
-    <string name="copyright_text">© 2025 nimbbl by bigital technologies pvt ltd</string>
+    <string name="copyright_text">© %d nimbbl by bigital technologies pvt ltd</string>
 
     <!-- Main Activity -->
     <string name="hello_world">Hello World!</string>

@@ -8,8 +8,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import org.json.JSONObject
@@ -61,9 +59,6 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
 
         // Setup toolbar
         setupToolbar()
-
-        // Setup safe area handling
-        setupSafeArea()
 
         // Initialize UI elements
         initializeUIElements()
@@ -616,21 +611,4 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         }
     }
 
-    private fun setupSafeArea() {
-        val rootView = findViewById<View>(android.R.id.content)
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
-            // Add top padding to position app bar below status bar
-            // This ensures the app bar is not hidden behind the status bar
-            v.setPadding(
-                systemBars.left + displayCutout.left,
-                systemBars.top + displayCutout.top, // Add top padding for status bar
-                systemBars.right + displayCutout.right,
-                systemBars.bottom + displayCutout.bottom
-            )
-            insets
-        }
-    }
 }

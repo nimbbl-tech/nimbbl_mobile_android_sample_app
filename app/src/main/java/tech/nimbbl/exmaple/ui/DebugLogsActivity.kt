@@ -47,6 +47,14 @@ class DebugLogsActivity : AppCompatActivity() {
     private var activeMatchIndex: Int? = null
     private var activeMatchOffsets: List<Int> = emptyList()
 
+    // Streaming update batching: accumulate lines for 80ms before flushing to TextView.
+    // This avoids O(n²) re-renders (tvLogs.text = fullText on every incoming line).
+    private val uiHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val pendingLines = StringBuilder()
+    private var flushScheduled = false
+    private var bufferTrimmedSinceFlush = false
+    private val flushRunnable = Runnable { flushPendingLines() }
+
     companion object {
         const val EXTRA_START_PAUSED = "extra_start_paused"
     }
@@ -124,6 +132,7 @@ class DebugLogsActivity : AppCompatActivity() {
     private fun stopLogcat() {
         logJob?.cancel()
         logJob = null
+        flushPendingLines()
         try {
             logProcess?.destroy()
         } catch (_: Exception) {
@@ -131,6 +140,20 @@ class DebugLogsActivity : AppCompatActivity() {
         logProcess = null
         isLogStreaming = false
         setLogStreamingUi(isStreaming = false)
+    }
+
+    private fun flushPendingLines() {
+        uiHandler.removeCallbacks(flushRunnable)
+        flushScheduled = false
+        val textToAppend = pendingLines.toString()
+        pendingLines.clear()
+        if (bufferTrimmedSinceFlush || !activeSearchQuery.isNullOrBlank()) {
+            bufferTrimmedSinceFlush = false
+            renderLogs(keepScrollPosition = true)
+        } else if (textToAppend.isNotEmpty()) {
+            tvLogs.append(textToAppend)
+            scrollView.post { scrollView.fullScroll(android.view.View.FOCUS_DOWN) }
+        }
     }
 
     private fun toggleLogStreaming() {
@@ -230,12 +253,18 @@ class DebugLogsActivity : AppCompatActivity() {
     }
 
     private suspend fun appendLine(line: String) {
-        if (buffer.length > maxChars) {
+        val wasTrimmed = buffer.length > maxChars
+        if (wasTrimmed) {
             buffer.delete(0, buffer.length - (maxChars / 2))
         }
         buffer.append(line).append('\n')
         withContext(Dispatchers.Main) {
-            renderLogs(keepScrollPosition = true)
+            pendingLines.append(line).append('\n')
+            if (wasTrimmed) bufferTrimmedSinceFlush = true
+            if (!flushScheduled) {
+                flushScheduled = true
+                uiHandler.postDelayed(flushRunnable, 80)
+            }
         }
     }
 
