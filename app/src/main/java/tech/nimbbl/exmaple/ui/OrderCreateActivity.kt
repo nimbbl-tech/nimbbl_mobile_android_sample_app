@@ -210,7 +210,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                     } else {
                         formattedShopBaseUrl
                     }
-                    //NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
+                    NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
                     NimbblCheckoutSDK.getInstance().setEnvironmentUrl(sdkEnvUrl)
 
                     // Do NOT use access token for checkout. It's only for authenticating create-order API calls.
