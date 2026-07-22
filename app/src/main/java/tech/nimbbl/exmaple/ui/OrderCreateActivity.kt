@@ -33,9 +33,11 @@ import tech.nimbbl.exmaple.utils.AppPreferenceKeys.SHOP_BASE_URL
 import tech.nimbbl.exmaple.utils.AppUtilExtensions
 import tech.nimbbl.exmaple.utils.UiUtils.showToast
 import tech.nimbbl.exmaple.utils.getBankCode
+import tech.nimbbl.exmaple.utils.getEMICode
 import tech.nimbbl.exmaple.utils.getPaymentFlow
 import tech.nimbbl.exmaple.utils.getPaymentModeCode
 import tech.nimbbl.exmaple.utils.getProductID
+import tech.nimbbl.exmaple.utils.getUpiAppCode
 import tech.nimbbl.exmaple.utils.getWalletCode
 import tech.nimbbl.webviewsdk.core.NimbblCheckoutSDK
 import tech.nimbbl.webviewsdk.models.NimbblCheckoutOptions
@@ -46,6 +48,7 @@ import java.io.InputStreamReader
 import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.Calendar
 
 class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
     private lateinit var binding: ActivityOrderCreateBinding
@@ -73,6 +76,11 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
     }
 
     private fun initialisation() {
+        // Render copyright with the current year so the footer stays in sync
+        // without requiring a yearly string-resource bump.
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        binding.tvCopyright.text = getString(R.string.copyright_text, currentYear)
+
         val adapter = HeaderCustomisationSpinAdapter(
             this, resources.getStringArray(R.array.option_enabled)
         )
@@ -97,9 +105,20 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
         )
         binding.spnPaymentMode.adapter = paymentAdapter
 
+        // UPI intent apps spinner uses the same icon-rendering adapter so each
+        // option (gpay, phonepe, paytm) shows its brand logo as a prefix icon.
+        val upiAppsAdapter = SubPaymentCustomisationSpinAdapter(
+            this, resources.getStringArray(R.array.sub_payment_type_upi_intent_apps)
+        )
+        binding.spnUpiApps.adapter = upiAppsAdapter
+
         binding.spnPaymentMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 try {
+                    // Always hide the UPI apps dropdown when the top-level payment mode changes;
+                    // it will only be shown again when UPI -> intent is chosen.
+                    binding.tvUpiAppTitle.visibility = View.GONE
+                    binding.spnUpiApps.visibility = View.GONE
                     when (position) {
                         0, 3 -> {
                             binding.tvSubpaymentTitle.visibility = View.GONE
@@ -132,6 +151,15 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                             )
                             binding.spnSubPaymentMode.adapter = subPaymentAdapter
                         }
+                        5 -> {
+                            binding.tvSubpaymentTitle.visibility = View.VISIBLE
+                            binding.spnSubPaymentMode.visibility = View.VISIBLE
+                            val subPaymentAdapter = SubPaymentCustomisationSpinAdapter(
+                                this@OrderCreateActivity,
+                                resources.getStringArray(R.array.sub_payment_type_emi)
+                            )
+                            binding.spnSubPaymentMode.adapter = subPaymentAdapter
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e("OrderCreate", "Error in payment mode selection: ${e.message}", e)
@@ -141,23 +169,27 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        binding.spnAppCurrencyFormat.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        // Toggle the UPI apps dropdown only when the parent payment mode is UPI
+        // and the user picks the "intent" sub-payment option.
+        binding.spnSubPaymentMode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 try {
-                    when (position) {
-                        0 -> {
-                            Log.d("SAN", "00000")
-                            paymentAdapter.setData(resources.getStringArray(R.array.payment_type))
-                            binding.spnPaymentMode.isEnabled = true
-                        }
-                        else -> {
-                            Log.d("SAN", "$position$position$position")
-                            paymentAdapter.setData(resources.getStringArray(R.array.payment_type_card))
-                            binding.spnPaymentMode.isEnabled = false
-                        }
+                    val parentSelection = binding.spnPaymentMode.selectedItem?.toString().orEmpty()
+                    val subSelection = parent.getItemAtPosition(position)?.toString().orEmpty()
+                    val upiLabel = getString(R.string.upi)
+                    val intentLabel = getString(R.string.intent)
+
+                    if (parentSelection.equals(upiLabel, ignoreCase = true) &&
+                        subSelection.equals(intentLabel, ignoreCase = true)
+                    ) {
+                        binding.tvUpiAppTitle.visibility = View.VISIBLE
+                        binding.spnUpiApps.visibility = View.VISIBLE
+                    } else {
+                        binding.tvUpiAppTitle.visibility = View.GONE
+                        binding.spnUpiApps.visibility = View.GONE
                     }
                 } catch (e: Exception) {
-                    Log.e("OrderCreate", "Error in currency format selection: ${e.message}", e)
+                    Log.e("OrderCreate", "Error in sub-payment selection: ${e.message}", e)
                 }
             }
 
@@ -208,7 +240,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
                     } else {
                         formattedShopBaseUrl
                     }
-                    //NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
+                    NimbblCheckoutSDK.getInstance().setDebugLoggingEnabled(sdkDebugLoggingEnabled)
                     NimbblCheckoutSDK.getInstance().setEnvironmentUrl(sdkEnvUrl)
 
                     // Do NOT use access token for checkout. It's only for authenticating create-order API calls.
@@ -311,7 +343,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
         val configuredBaseUrl = preferences.getString(SHOP_BASE_URL, "").orEmpty().trim()
         val finalBaseUrl = when {
             configuredBaseUrl.isEmpty() -> ApiConstants.NIMBBL_TECH_URL
-            isIpBasedUrl(configuredBaseUrl) -> ApiConstants.BASE_URL_QA1
+            isIpBasedUrl(configuredBaseUrl) -> ApiConstants.BASE_URL_QA3
             else -> configuredBaseUrl
         }
         val formatted = AppUtilExtensions.formatUrl(finalBaseUrl)
@@ -333,7 +365,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
         }
     }
 
- 
+
     private fun resolveShopOrderUrl(apiBaseUrl: String): String {
         return try {
             val normalized = AppUtilExtensions.formatUrl(apiBaseUrl).trimEnd('/')
@@ -381,11 +413,15 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             }
 
             // User details (aligned with Core API SDK User model)
-            put("user", JSONObject().apply {
-                put("email", emailId)
-                put("name", firstName)
-                put("mobile_number", mobileNumber)
-            })
+            if(mobileNumber.isNotEmpty()) {
+                put("user", JSONObject().apply {
+                    put("email", emailId)
+                    put("name", firstName)
+                    put("mobile_number", mobileNumber)
+                })
+            }else {
+                put("user", JSONObject())
+            }
 
             // Optional: Add order line items array if order_line_items is true
             put("order_line_item", JSONArray().apply {
@@ -697,11 +733,20 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
         val preferences = getSharedPreferences(APP_PREFERENCE, MODE_PRIVATE)
         val appMode = preferences?.getString(SAMPLE_APP_MODE, EXPERIENCE_WEBVIEW) ?: EXPERIENCE_WEBVIEW
         if (appMode == getString(R.string.value_webview)) {
+            // Only forward an upi app code when the UPI apps dropdown is visible
+            // (i.e. user picked UPI -> intent and chose gpay/phonepe/paytm).
+            val upiAppCode = if (binding.spnUpiApps.visibility == View.VISIBLE) {
+                getUpiAppCode(binding.spnUpiApps.selectedItem?.toString() ?: "", this@OrderCreateActivity)
+            } else {
+                ""
+            }
             val options = builder.setOrderToken(orderToken)
                 .setPaymentModeCode(getPaymentModeCode(binding.spnPaymentMode.selectedItem?.toString() ?: "", this@OrderCreateActivity))
                 .setBankCode(getBankCode(binding.spnSubPaymentMode.selectedItem?.toString() ?: "", this@OrderCreateActivity))
                 .setPaymentFlow(getPaymentFlow(binding.spnSubPaymentMode.selectedItem?.toString() ?: "", this@OrderCreateActivity))
                 .setWalletCode(getWalletCode(binding.spnSubPaymentMode.selectedItem?.toString() ?: "", this@OrderCreateActivity))
+                .setEMICode(getEMICode(binding.spnSubPaymentMode.selectedItem?.toString() ?: "", this@OrderCreateActivity))
+                .setUpiAppCode(upiAppCode)
                 .build()
             NimbblCheckoutSDK.getInstance().init(this)
             NimbblCheckoutSDK.getInstance().checkout(options)
@@ -713,7 +758,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
 
     override fun onCheckoutResponse(data: MutableMap<String, Any>) {
         showLoading(false)
-        val intent = Intent(this, OrderSucessPageAcitivty::class.java)
+        val intent = Intent(this, OrderSuccessPageActivity::class.java)
         try {
             val jsonString = convertMapToJsonString(data)
             intent.putExtra("raw_json_data", jsonString)
@@ -721,6 +766,7 @@ class OrderCreateActivity : AppCompatActivity(), NimbblCheckoutPaymentListener {
             Log.e("OrderCreate", "Error converting data to JSON: ${e.message}")
         }
         startActivity(intent)
+
     }
 
     private fun convertMapToJsonString(data: Map<String, Any>): String {

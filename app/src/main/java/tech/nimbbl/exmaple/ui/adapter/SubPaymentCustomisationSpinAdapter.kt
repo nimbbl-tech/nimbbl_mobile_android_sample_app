@@ -72,6 +72,27 @@ class SubPaymentCustomisationSpinAdapter(context: Context?, private val itemList
                     context.resources.getStringArray(R.array.sub_payment_type_wallet)[3] -> {
                         resId = R.drawable.phonepe
                     }
+                    context.resources.getStringArray(R.array.sub_payment_type_emi)[0] -> {
+                        resId = R.drawable.grid
+                    }
+                    context.resources.getStringArray(R.array.sub_payment_type_emi)[1] -> {
+                        resId = R.drawable.credit_card_emi
+                    }
+                    context.resources.getStringArray(R.array.sub_payment_type_emi)[2] -> {
+                        resId = R.drawable.credit_card_emi
+                    }
+                    context.resources.getStringArray(R.array.sub_payment_type_emi)[3] -> {
+                        resId = R.drawable.cardless_emi
+                    }
+                    context.resources.getStringArray(R.array.sub_payment_type_upi_intent_apps)[0] -> {
+                        resId = R.drawable.gpay
+                    }
+                    context.resources.getStringArray(R.array.sub_payment_type_upi_intent_apps)[1] -> {
+                        resId = R.drawable.phonepe
+                    }
+                    context.resources.getStringArray(R.array.sub_payment_type_upi_intent_apps)[2] -> {
+                        resId = R.drawable.paytm
+                    }
                 }
 
                 ivCircle.setImageDrawable(ResourcesCompat.getDrawable(context.resources, resId, context.theme))

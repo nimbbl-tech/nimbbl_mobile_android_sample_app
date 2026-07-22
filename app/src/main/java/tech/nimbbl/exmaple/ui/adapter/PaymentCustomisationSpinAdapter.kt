@@ -92,6 +92,13 @@ class PaymentCustomisationSpinAdapter(context: Context?, private var itemList: A
                                 context.theme
                             ))
                         }
+                        context.resources.getStringArray(R.array.payment_type)[5] -> {
+                            ivCircle.setImageDrawable(ResourcesCompat.getDrawable(
+                                context.resources,
+                                R.drawable.card,
+                                context.theme
+                            ))
+                        }
                     }
                     // Match icon tint to the current text color (white in dark mode, black in light).
                     ivCircle.setColorFilter(textViewName.currentTextColor)

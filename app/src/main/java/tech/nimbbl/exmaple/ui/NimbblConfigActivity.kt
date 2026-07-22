@@ -43,7 +43,7 @@ class NimbblConfigActivity : AppCompatActivity() {
     private val experiences = arrayOf(EXPERIENCE_NATIVE, EXPERIENCE_WEBVIEW)
     private var selectedEnvironment: String = ENVIRONMENT_PROD
     private var selectedExperience: String = EXPERIENCE_WEBVIEW
-    private var qaUrl: String = ApiConstants.BASE_URL_QA1
+    private var qaUrl: String = ApiConstants.BASE_URL_QA3
     private var accessToken: String = ""
     private var debugMenuUnlocked: Boolean = false
     private var sdkDebugLoggingEnabled: Boolean = false
@@ -92,7 +92,7 @@ class NimbblConfigActivity : AppCompatActivity() {
         
         // Load QA URL if it's a QA environment
         if (selectedEnvironment == ENVIRONMENT_QA) {
-            qaUrl = preferences.getString(QA_ENVIRONMENT_URL, ApiConstants.BASE_URL_QA1) ?: ApiConstants.BASE_URL_QA1
+            qaUrl = preferences.getString(QA_ENVIRONMENT_URL, ApiConstants.BASE_URL_QA3) ?: ApiConstants.BASE_URL_QA3
         }
         
         // Load experience
@@ -126,7 +126,7 @@ class NimbblConfigActivity : AppCompatActivity() {
                 if (newUrl.isNotEmpty()) {
                     qaUrl = newUrl
                 } else {
-                    qaUrl = ApiConstants.BASE_URL_QA1
+                    qaUrl = ApiConstants.BASE_URL_QA3
                     binding.etQaUrl.setText(qaUrl)
                 }
             }
@@ -226,7 +226,7 @@ class NimbblConfigActivity : AppCompatActivity() {
             // Save QA URL if switching to QA
             if (selectedEnvironment == ENVIRONMENT_QA) {
                 if (qaUrl.isEmpty()) {
-                    qaUrl = ApiConstants.BASE_URL_QA1
+                    qaUrl = ApiConstants.BASE_URL_QA3
                 }
                 binding.etQaUrl.setText(qaUrl)
             }

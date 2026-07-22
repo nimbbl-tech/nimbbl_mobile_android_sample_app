@@ -17,7 +17,7 @@ object ApiConstants {
     const val BASE_URL_PRE_PROD = "https://apipp.nimbbl.tech/"
 
     // QA1 URL (Default QA Environment)
-    const val BASE_URL_QA1 = "https://qa1api.qa.nimbbl.tech/"
+    const val BASE_URL_QA3 = "https://qa3api.qa.nimbbl.tech/"
 
     // Shop Order URLs - Used by sample app for shop order creation
     const val SHOP_ORDER_URL_QA1 = "https://qa1sonicshopapi.qa.nimbbl.tech/create-shop"

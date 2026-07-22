@@ -28,6 +28,7 @@ fun getPaymentModeCode(paymentMode: String, context: Context): String {
         context.getString(tech.nimbbl.exmaple.R.string.wallet) -> "Wallet"
         context.getString(tech.nimbbl.exmaple.R.string.card) -> "card"
         context.getString(tech.nimbbl.exmaple.R.string.upi) -> "UPI"
+        context.getString(tech.nimbbl.exmaple.R.string.emi) -> "emi"
         else -> ""
     }
 }
@@ -52,11 +53,30 @@ fun getWalletCode(walletName: String, context: Context): String {
     }
 }
 
+fun getEMICode(emiName: String, context: Context): String {
+    return when (emiName) {
+        context.getString(tech.nimbbl.exmaple.R.string.all_emis) -> ""
+        context.getString(tech.nimbbl.exmaple.R.string.debit_card_emi) -> "debit"
+        context.getString(tech.nimbbl.exmaple.R.string.credit_card_emi) -> "credit"
+        context.getString(tech.nimbbl.exmaple.R.string.cardless_emi) -> "cardless"
+        else -> ""
+    }
+}
+
 fun getPaymentFlow(upiModeName: String, context: Context): String {
     return when (upiModeName) {
         context.getString(tech.nimbbl.exmaple.R.string.collect_intent) -> "phonepe"
         context.getString(tech.nimbbl.exmaple.R.string.collect) -> "collect"
         context.getString(tech.nimbbl.exmaple.R.string.intent) -> "intent"
+        else -> ""
+    }
+}
+
+fun getUpiAppCode(upiAppName: String, context: Context): String {
+    return when (upiAppName) {
+        context.getString(tech.nimbbl.exmaple.R.string.upi_app_gpay) -> "gpay"
+        context.getString(tech.nimbbl.exmaple.R.string.upi_app_phonepe) -> "phonepeupi"
+        context.getString(tech.nimbbl.exmaple.R.string.upi_app_paytm) -> "paytmupi"
         else -> ""
     }
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,7 +16,7 @@ import com.google.android.material.button.MaterialButton
 import org.json.JSONObject
 import tech.nimbbl.exmaple.R
 
-class OrderSucessPageAcitivty : AppCompatActivity() {
+class OrderSuccessPageActivity : AppCompatActivity() {
     var rawJsonData: String? = null
 
     // Parsed data from complex JSON
@@ -42,6 +43,8 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
         val shippingPincode: String = ""
     )
 
+
+
     // UI Elements
     private lateinit var statusIcon: ImageView
     private lateinit var statusTitle: TextView
@@ -57,13 +60,19 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_order_sucess_page)
+        val rootView = findViewById<View>(R.id.root)
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // Match Config screen behavior: apply system bar insets to the root container.
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         // Setup toolbar
-        setupToolbar()
+       setupToolbar()
 
-        // Setup safe area handling
-        setupSafeArea()
 
         // Initialize UI elements
         initializeUIElements()
@@ -613,24 +622,6 @@ class OrderSucessPageAcitivty : AppCompatActivity() {
             }
         } else {
             "N/A"
-        }
-    }
-
-    private fun setupSafeArea() {
-        val rootView = findViewById<View>(android.R.id.content)
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
-            // Add top padding to position app bar below status bar
-            // This ensures the app bar is not hidden behind the status bar
-            v.setPadding(
-                systemBars.left + displayCutout.left,
-                systemBars.top + displayCutout.top, // Add top padding for status bar
-                systemBars.right + displayCutout.right,
-                systemBars.bottom + displayCutout.bottom
-            )
-            insets
         }
     }
 }
